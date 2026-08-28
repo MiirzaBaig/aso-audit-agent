@@ -9,6 +9,7 @@ import { ConfirmCard } from "@/components/ConfirmCard";
 import { AuditingSkeleton } from "@/components/AuditingSkeleton";
 import { ReportView } from "@/components/ReportView";
 import { ExportBar } from "@/components/ExportBar";
+import { LogoMark } from "@/components/Logo";
 
 type Phase =
   | { step: "idle" }
@@ -61,7 +62,9 @@ export default function Home() {
       <main>
         <header className="topbar" data-noprint>
           <button className="brand" onClick={reset} aria-label="ASO Audit home">
-            <span className="mark" aria-hidden />
+            <span className="mark" aria-hidden>
+              <LogoMark size={26} />
+            </span>
             <span className="wordmark">ASO<span className="thin"> audit</span></span>
           </button>
           <div className="topright">
@@ -167,14 +170,10 @@ export default function Home() {
           padding: 0;
         }
         .mark {
-          width: 22px;
-          height: 22px;
-          border-radius: 6px;
-          background: var(--accent);
-          box-shadow: inset 0 0 0 3px var(--bg), 0 0 0 1px var(--accent);
-          transition: transform 0.3s var(--ease);
+          display: inline-flex;
+          transition: transform 0.35s var(--ease);
         }
-        .brand:hover .mark { transform: rotate(90deg); }
+        .brand:hover .mark { transform: scale(1.08) rotate(-8deg); }
         .wordmark {
           font-family: var(--font-display);
           font-weight: 600;
