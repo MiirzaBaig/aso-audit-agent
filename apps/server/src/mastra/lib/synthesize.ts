@@ -33,6 +33,11 @@ export async function synthesizeAnalysis(
     const prompt = buildPrompt(listing, scoreCard, competitors);
     const result = await asoAnalystAgent.generate(prompt, {
       structuredOutput: { schema: analystOutputSchema },
+      // The plan is large (9–15 detailed recs with before/after). Give the
+      // model ample room — some NIM models use a reasoning channel that eats
+      // into the budget before the final JSON is emitted — and keep it low-temp
+      // for consistent, grounded output.
+      modelSettings: { maxOutputTokens: 4096, temperature: 0.4 },
     });
 
     const output = (result as { object?: AnalystOutput }).object;

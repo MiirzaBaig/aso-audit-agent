@@ -16,7 +16,7 @@ export const env = {
   nim: {
     apiKey: optional("NIM_API_KEY"),
     baseUrl: optional("NIM_BASE_URL") ?? "https://integrate.api.nvidia.com/v1",
-    model: optional("NIM_MODEL") ?? "meta/llama-3.3-70b-instruct",
+    model: optional("NIM_MODEL") ?? "openai/gpt-oss-120b",
   },
   /** Firecrawl — only used to scrape the subtitle, which the iTunes API omits. Fully optional. */
   firecrawl: {
