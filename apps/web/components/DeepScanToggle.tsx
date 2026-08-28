@@ -47,10 +47,14 @@ export function DeepScanToggle({
       </button>
 
       <style jsx>{`
-        /* fixed footprint — border + bg animate in place, no layout shift */
+        /* the outer wrapper carries a permanent 1px border in BOTH states, so
+           turning ON only changes its color — the footprint never changes and
+           the row never shifts. No focus ring on this box. */
         .ds {
-          border: 1px solid transparent;
+          display: inline-flex;
+          border: 1px solid var(--line);
           border-radius: 999px;
+          background: var(--surface);
           transition: background 0.25s var(--ease), border-color 0.25s var(--ease);
         }
         .ds.on {
@@ -63,18 +67,20 @@ export function DeepScanToggle({
           gap: 0.65rem;
           background: none;
           border: none;
-          padding: 0.4rem 0.7rem 0.4rem 0.5rem;
+          padding: 0.4rem 0.75rem 0.4rem 0.5rem;
           border-radius: 999px;
           text-align: left;
           transition: opacity 0.15s;
+          -webkit-tap-highlight-color: transparent;
         }
         .hit:disabled {
           opacity: 0.5;
           cursor: default;
         }
-        .hit:focus-visible {
-          outline: 2px solid var(--accent);
-          outline-offset: 2px;
+        /* focus ring hugs the switch track, not the whole pill */
+        .hit:focus-visible { outline: none; }
+        .hit:focus-visible .track {
+          box-shadow: 0 0 0 3px var(--accent-wash), 0 0 0 4px var(--accent);
         }
         .track {
           position: relative;

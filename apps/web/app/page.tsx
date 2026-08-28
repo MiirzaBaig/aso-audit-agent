@@ -13,8 +13,8 @@ import { ExportBar } from "@/components/ExportBar";
 type Phase =
   | { step: "idle" }
   | { step: "resolving" }
-  | { step: "confirming"; runId: string; identity: AppIdentity }
-  | { step: "auditing"; identity: AppIdentity }
+  | { step: "confirming"; runId: string; identity: AppIdentity; deepScan: boolean }
+  | { step: "auditing"; identity: AppIdentity; deepScan: boolean }
   | { step: "done"; identity: AppIdentity; result: AuditResult };
 
 export default function Home() {
@@ -28,7 +28,7 @@ export default function Home() {
     setPhase({ step: "resolving" });
     try {
       const res = await startAudit(url, deepScan);
-      setPhase({ step: "confirming", runId: res.runId, identity: res.identity });
+      setPhase({ step: "confirming", runId: res.runId, identity: res.identity, deepScan });
     } catch (e) {
       setError(e instanceof Error ? e.message : "Something went wrong.");
       setPhase({ step: "idle" });
@@ -37,8 +37,8 @@ export default function Home() {
 
   async function handleConfirm() {
     if (phase.step !== "confirming") return;
-    const { runId, identity } = phase;
-    setPhase({ step: "auditing", identity });
+    const { runId, identity, deepScan } = phase;
+    setPhase({ step: "auditing", identity, deepScan });
     try {
       const result = await resumeAudit(runId, true);
       setPhase({ step: "done", identity, result });
@@ -119,7 +119,7 @@ export default function Home() {
 
           {phase.step === "auditing" && (
             <div className="flow wide">
-              <AuditingSkeleton identity={phase.identity} />
+              <AuditingSkeleton identity={phase.identity} deepScan={phase.deepScan} />
             </div>
           )}
 

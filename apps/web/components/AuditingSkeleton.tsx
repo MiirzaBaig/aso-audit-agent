@@ -10,24 +10,39 @@ import type { AppIdentity } from "@aso/shared";
  * like the page filling in rather than blocking. A quiet status line names the
  * real pipeline stage underway.
  */
-const STAGES = [
+const BASE_STAGES = [
   "Reading listing metadata",
   "Pulling ratings & reviews",
   "Finding category competitors",
-  "Scoring 10 dimensions",
-  "Writing the action plan",
+  "Checking live search positions",
 ] as const;
 
-export function AuditingSkeleton({ identity }: { identity: AppIdentity }) {
+export function AuditingSkeleton({
+  identity,
+  deepScan = false,
+}: {
+  identity: AppIdentity;
+  deepScan?: boolean;
+}) {
+  // With Deep scan on, OCR is the slow step — name it so the extra wait reads
+  // as work, not a hang.
+  const stages = [
+    ...BASE_STAGES,
+    ...(deepScan ? (["Reading your screenshots with OCR"] as const) : []),
+    "Scoring 10 dimensions",
+    "Writing the action plan",
+  ];
+
   const [stage, setStage] = useState(0);
 
   useEffect(() => {
     const id = setInterval(
-      () => setStage((s) => Math.min(s + 1, STAGES.length - 1)),
-      1500,
+      () => setStage((s) => Math.min(s + 1, stages.length - 1)),
+      deepScan ? 1900 : 1500,
     );
     return () => clearInterval(id);
-  }, []);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [stages.length, deepScan]);
 
   return (
     <div className="wrap">
@@ -37,9 +52,10 @@ export function AuditingSkeleton({ identity }: { identity: AppIdentity }) {
           <strong>{identity.name}</strong>
           <span className="mono">{identity.developer}</span>
         </div>
+        {deepScan && <span className="deep mono">✦ deep scan</span>}
         <div className="status">
           <span className="dot" aria-hidden />
-          <span key={stage} className="stage-text">{STAGES[stage]}…</span>
+          <span key={stage} className="stage-text">{stages[stage]}…</span>
         </div>
       </div>
 
@@ -84,6 +100,18 @@ export function AuditingSkeleton({ identity }: { identity: AppIdentity }) {
         .who { display: flex; flex-direction: column; min-width: 0; }
         .who strong { font-size: 0.9rem; }
         .who span { font-size: 0.76rem; color: var(--ink-3); }
+        .deep {
+          margin-left: auto;
+          font-size: 0.66rem;
+          letter-spacing: 0.06em;
+          text-transform: uppercase;
+          color: var(--accent);
+          background: var(--accent-wash);
+          border: 1px solid color-mix(in srgb, var(--accent) 28%, transparent);
+          padding: 0.2rem 0.5rem;
+          border-radius: 999px;
+          white-space: nowrap;
+        }
         .status {
           margin-left: auto;
           display: flex;
@@ -92,6 +120,8 @@ export function AuditingSkeleton({ identity }: { identity: AppIdentity }) {
           font-size: 0.82rem;
           color: var(--ink-2);
         }
+        /* when the deep badge is present it takes the auto-gap; status hugs it */
+        .deep + .status { margin-left: 0.85rem; }
         .dot {
           width: 7px;
           height: 7px;
