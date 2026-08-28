@@ -74,6 +74,20 @@ can't invent numbers because the numbers already exist. When no NIM key is set,
 a deterministic template produces the same output shape from the lowest-scoring,
 highest-weighted dimensions.
 
+### Beyond the brief — trust & proof features
+- **Review evidence** — themes (crashes, pricing…) are mined from the *real*
+  fetched reviews, and the UI lets you open any theme to read the source reviews
+  verbatim. Proves the "recurring complaints" scoring isn't fabricated.
+- **Measured search visibility** — for a few of the app's key terms we query
+  App Store search live and report where it actually ranks (e.g. `spotify #1`,
+  `music #3`, `"songs playlists"` not found). Turns the *inferred* keyword field
+  into *measured* discoverability.
+- **Screenshot OCR** (opt-in) — with `ENABLE_OCR=true`, tesseract.js reads the
+  on-image caption text Apple OCR-indexes, making the Screenshots dimension
+  fully observable. Off by default because it's slow; hard-bounded when on.
+- **Export** — "Save PDF" (print-optimized) and "Copy summary" on any report.
+- **Confidence badges** — every partially-observable dimension explains *why* on hover.
+
 ### Mastra primitives (all four, deliberately)
 - **Tools** — `fetch-app-metadata`, `fetch-reviews`, `find-competitors` (thin
   wrappers over plain service functions, so the workflow can reuse the logic).
