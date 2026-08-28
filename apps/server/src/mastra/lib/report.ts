@@ -7,6 +7,7 @@ import type {
 import { computeScoreCard } from "../scoring/index.js";
 import { synthesizeAnalysis } from "./synthesize.js";
 import { buildReviewEvidence } from "./review-evidence.js";
+import { measureKeywordRanks } from "./keyword-ranks.js";
 
 /**
  * Assembles the final audit: compute scores deterministically, synthesize the
@@ -18,7 +19,13 @@ export async function buildAuditReport(
   competitors: Competitor[],
 ): Promise<{ report: AuditReport; analysisSource: "llm" | "template"; scoreCard: ScoreCard }> {
   const scoreCard = computeScoreCard(listing, competitors);
-  const { output, source } = await synthesizeAnalysis(listing, scoreCard, competitors);
+
+  // Synthesis (LLM/template) and the live keyword-rank probes are independent —
+  // run them together so the ranks add no serial latency.
+  const [{ output, source }, keywordRanks] = await Promise.all([
+    synthesizeAnalysis(listing, scoreCard, competitors),
+    measureKeywordRanks(listing),
+  ]);
 
   const report: AuditReport = {
     scoreCard,
@@ -30,6 +37,7 @@ export async function buildAuditReport(
     },
     reviewEvidence: buildReviewEvidence(listing),
     reviewsAnalysed: listing.reviews.length,
+    keywordRanks,
     limitations: collectLimitations(listing, scoreCard),
   };
 

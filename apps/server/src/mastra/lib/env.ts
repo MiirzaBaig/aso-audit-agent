@@ -24,6 +24,13 @@ export const env = {
   },
   /** Default storefront when a URL omits the country segment. */
   defaultCountry: (optional("DEFAULT_COUNTRY") ?? "us").toLowerCase(),
+  /**
+   * Screenshot OCR is OFF by default — it's slow (WASM model download + a few
+   * seconds per image) and the audit prioritises speed on unseen apps. Set
+   * ENABLE_OCR=true to turn on the real on-image-text read of the Screenshots
+   * dimension (makes it fully observable). See README.
+   */
+  ocrEnabled: optional("ENABLE_OCR") === "true",
 } as const;
 
 export const hasLlm = (): boolean => Boolean(env.nim.apiKey);

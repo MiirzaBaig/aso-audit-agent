@@ -101,6 +101,20 @@ export const reviewThemeSchema = z.object({
 });
 export type ReviewTheme = z.infer<typeof reviewThemeSchema>;
 
+/**
+ * Where the app actually ranks in App Store search for a given keyword. Turns
+ * the *inferred* keyword field into *measured* positions — real evidence of
+ * discoverability, not a guess.
+ */
+export const keywordRankSchema = z.object({
+  keyword: z.string(),
+  /** 1-based rank within the search results, or null if not found in the top N. */
+  rank: z.number().int().positive().nullable(),
+  /** How many results were scanned (the ceiling for "not found"). */
+  scanned: z.number().int().nonnegative(),
+});
+export type KeywordRank = z.infer<typeof keywordRankSchema>;
+
 /** The complete audit the UI renders. */
 export const auditReportSchema = z.object({
   scoreCard: scoreCardSchema,
@@ -112,6 +126,8 @@ export const auditReportSchema = z.object({
   reviewEvidence: z.array(reviewThemeSchema),
   /** Total recent reviews analysed (for the "based on N real reviews" line). */
   reviewsAnalysed: z.number().int().nonnegative(),
+  /** Measured App Store search ranks for a few of the app's key terms. */
+  keywordRanks: z.array(keywordRankSchema),
   /** Fields we could not observe and had to infer or skip. Shown as a caveat. */
   limitations: z.array(z.string()),
 });

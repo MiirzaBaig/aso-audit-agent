@@ -8,6 +8,7 @@ import { DimensionBars } from "./DimensionBars";
 import { Recommendations } from "./Recommendations";
 import { CompetitorTable } from "./CompetitorTable";
 import { ReviewEvidence } from "./ReviewEvidence";
+import { KeywordRanks } from "./KeywordRanks";
 
 /**
  * The full audit as a single diagnostic document. Sections are separated by
@@ -52,17 +53,23 @@ export function ReportView({
         <DimensionBars dimensions={report.scoreCard.dimensions} />
       </Block>
 
+      {report.keywordRanks.length > 0 && (
+        <Block eyebrow="Search visibility" hint="Live App Store positions" i={2}>
+          <KeywordRanks ranks={report.keywordRanks} />
+        </Block>
+      )}
+
       {report.reviewEvidence.length > 0 && (
-        <Block eyebrow="Review evidence" hint="Real reviews behind the score" i={2}>
+        <Block eyebrow="Review evidence" hint="Real reviews behind the score" i={3}>
           <ReviewEvidence themes={report.reviewEvidence} total={report.reviewsAnalysed} />
         </Block>
       )}
 
-      <Block eyebrow="Action plan" hint="Ranked by leverage" i={3}>
+      <Block eyebrow="Action plan" hint="Ranked by leverage" i={4}>
         <Recommendations recommendations={report.recommendations} />
       </Block>
 
-      <Block eyebrow="Competitor comparison" i={4}>
+      <Block eyebrow="Competitor comparison" i={5}>
         <CompetitorTable
           identity={identity}
           scoreCard={report.scoreCard}
@@ -71,7 +78,7 @@ export function ReportView({
       </Block>
 
       {report.limitations.length > 0 && (
-        <div className="limits reveal" style={{ ["--i" as string]: 5 }}>
+        <div className="limits reveal" style={{ ["--i" as string]: 6 }}>
           <span className="label">What we couldn&apos;t see</span>
           <ul>
             {report.limitations.map((l, i) => (

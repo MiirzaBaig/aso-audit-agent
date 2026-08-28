@@ -11,6 +11,7 @@ import {
 } from "../lib/itunes.js";
 import { scrapeListingExtras } from "../lib/scrape.js";
 import { inferKeywordField } from "../lib/keyword-inference.js";
+import { ocrScreenshots } from "../lib/screenshot-ocr.js";
 
 /**
  * Plain service functions with no Mastra coupling. Both the tools (for the
@@ -38,11 +39,25 @@ export async function getAppListing(url: string): Promise<AppListing> {
 
   const storeUrl = app.trackViewUrl || buildStoreUrl(appId, country);
 
-  const [extras, hasVideo, reviews] = await Promise.all([
+  const [extras, hasVideo, reviews, ocr] = await Promise.all([
     scrapeListingExtras(storeUrl),
     detectAppPreviewVideo(storeUrl),
     fetchRecentReviews(appId, country),
+    ocrScreenshots(app.screenshotUrls ?? []),
   ]);
+
+  const screenshotText =
+    ocr && ocr.text.length
+      ? sourced<string[] | null>(
+          ocr.text,
+          Provenance.Observed,
+          `On-image text read via OCR of the first ${ocr.imagesRead} screenshot(s).`,
+        )
+      : sourced<string[] | null>(
+          null,
+          Provenance.Observed,
+          "Screenshot OCR was skipped or found no legible text.",
+        );
 
   const subtitle = extras.subtitle
     ? sourced<string | null>(
@@ -82,6 +97,7 @@ export async function getAppListing(url: string): Promise<AppListing> {
     ),
     version: app.version,
     screenshotUrls: app.screenshotUrls ?? [],
+    screenshotText,
     hasAppPreviewVideo: hasVideo,
     averageRating: round1(app.averageUserRating ?? 0),
     ratingCount: app.userRatingCount ?? 0,

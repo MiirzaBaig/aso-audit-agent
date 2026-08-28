@@ -3,11 +3,10 @@ import { clampScore, type DimensionScorer } from "../types.js";
 const MAX_SLOTS = 10;
 
 /**
- * Screenshots. Apple allows up to 10 and OCR-indexes on-image text. We can
- * observe *how many* slots are filled (a strong signal on its own) but not the
- * design quality of the images from the API — so we score slot utilisation
- * deterministically and leave the visual-quality judgment to the analyst,
- * flagging the dimension as only partially observable.
+ * Screenshots. Apple allows up to 10 and OCR-indexes on-image text. We score
+ * slot utilisation deterministically, and when screenshot OCR succeeded we also
+ * assess the on-image copy — which makes the dimension fully observable instead
+ * of deferring the text check to a human.
  */
 export const scoreScreenshots: DimensionScorer = ({ listing }) => {
   const count = listing.screenshotUrls.length;
@@ -30,11 +29,24 @@ export const scoreScreenshots: DimensionScorer = ({ listing }) => {
     score += 1.5;
     evidence.push("Strong slot coverage — good for storytelling deeper in the gallery.");
   }
-
-  // Baseline credit for having the first-impression slots filled.
   if (count >= 3) score += 1.5;
 
-  evidence.push("On-image text quality and design cohesion require visual review — flagged for the analyst.");
+  // On-image text via OCR (up to +2, and makes the dimension observable).
+  const ocr = listing.screenshotText.value;
+  if (ocr && ocr.length) {
+    const wordCount = ocr.length;
+    const sample = ocr.slice(0, 8).join(", ");
+    if (wordCount >= 4) {
+      score = Math.min(10, score + 1);
+      evidence.push(`OCR read on-image text across the first screenshots (Apple indexes this): "${sample}"…`);
+    } else {
+      evidence.push(`OCR found little on-image text ("${sample}") — captions are a missed keyword and value-prop surface.`);
+      score = Math.max(0, score - 0.5);
+    }
+    return { id: "screenshots", score: clampScore(score), evidence, observable: true };
+  }
 
+  // OCR unavailable — fall back to slot-count only, flagged partial.
+  evidence.push("On-image text quality and design cohesion require visual review — OCR was unavailable.");
   return { id: "screenshots", score: clampScore(score), evidence, observable: false };
 };

@@ -22,6 +22,7 @@ function listing(overrides: Partial<AppListing> = {}): AppListing {
     promotionalText: sourced<string | null>(null, Provenance.Scraped),
     version: "3.2.1",
     screenshotUrls: Array.from({ length: 8 }, (_, i) => `https://example.com/s${i}.png`),
+    screenshotText: sourced<string[] | null>(null, Provenance.Observed),
     hasAppPreviewVideo: true,
     averageRating: 4.6,
     ratingCount: 12000,

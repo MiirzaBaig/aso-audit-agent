@@ -8,6 +8,7 @@ import { UrlComposer } from "@/components/UrlComposer";
 import { ConfirmCard } from "@/components/ConfirmCard";
 import { AuditingSkeleton } from "@/components/AuditingSkeleton";
 import { ReportView } from "@/components/ReportView";
+import { ExportBar } from "@/components/ExportBar";
 
 type Phase =
   | { step: "idle" }
@@ -58,7 +59,7 @@ export default function Home() {
     <>
       <ThemeScript />
       <main>
-        <header className="topbar">
+        <header className="topbar" data-noprint>
           <button className="brand" onClick={reset} aria-label="ASO Audit home">
             <span className="mark" aria-hidden />
             <span className="wordmark">ASO<span className="thin"> audit</span></span>
@@ -124,15 +125,18 @@ export default function Home() {
 
           {phase.step === "done" && (
             <div className="flow wide">
-              <button className="again" onClick={reset}>
-                ← Audit another app
-              </button>
+              <div className="result-bar" data-noprint>
+                <button className="again" onClick={reset}>
+                  ← Audit another app
+                </button>
+                <ExportBar identity={phase.identity} result={phase.result} />
+              </div>
               <ReportView identity={phase.identity} result={phase.result} />
             </div>
           )}
         </div>
 
-        <footer className="foot">
+        <footer className="foot" data-noprint>
           <span className="label">agents · tools · suspend/resume workflow · skill</span>
         </footer>
       </main>
@@ -232,6 +236,13 @@ export default function Home() {
           gap: 1.25rem;
         }
         .flow.wide { max-width: var(--maxw); }
+        .result-bar {
+          display: flex;
+          align-items: center;
+          justify-content: space-between;
+          gap: 1rem;
+          flex-wrap: wrap;
+        }
         .again {
           align-self: flex-start;
           background: none;

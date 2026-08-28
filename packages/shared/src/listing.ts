@@ -47,6 +47,8 @@ export const appListingSchema = appIdentitySchema.extend({
   promotionalText: sourcedSchema(z.string().nullable()),
   version: z.string(),
   screenshotUrls: z.array(z.string().url()),
+  /** On-image text recovered via OCR of the first screenshots (Apple OCR-indexes it). Null if OCR was skipped/failed. */
+  screenshotText: sourcedSchema(z.array(z.string()).nullable()),
   /** True if the listing has at least one app preview video. */
   hasAppPreviewVideo: z.boolean(),
   averageRating: z.number().min(0).max(5),
