@@ -22,14 +22,19 @@ export const auditRoutes = [
     method: "POST",
     handler: async (c) => {
       const mastra = c.get("mastra");
-      const body = (await c.req.json().catch(() => ({}))) as { url?: string };
+      const body = (await c.req.json().catch(() => ({}))) as {
+        url?: string;
+        deepScan?: boolean;
+      };
       if (!body.url || typeof body.url !== "string") {
         return c.json({ error: "Missing 'url' in request body." }, 400);
       }
 
       const workflow = mastra.getWorkflow("asoAuditWorkflow");
       const run = await workflow.createRun();
-      const result = await run.start({ inputData: { url: body.url } });
+      const result = await run.start({
+        inputData: { url: body.url, deepScan: Boolean(body.deepScan) },
+      });
 
       if (result.status === "suspended") {
         // The confirm-app step suspended with the surface identity to show.

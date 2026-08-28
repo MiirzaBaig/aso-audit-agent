@@ -23,11 +23,11 @@ export default function Home() {
 
   const busy = phase.step === "resolving";
 
-  async function handleStart(url: string) {
+  async function handleStart(url: string, deepScan = false) {
     setError(null);
     setPhase({ step: "resolving" });
     try {
-      const res = await startAudit(url);
+      const res = await startAudit(url, deepScan);
       setPhase({ step: "confirming", runId: res.runId, identity: res.identity });
     } catch (e) {
       setError(e instanceof Error ? e.message : "Something went wrong.");

@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { DeepScanToggle } from "./DeepScanToggle";
 
 const EXAMPLES = [
   { label: "Spotify", url: "https://apps.apple.com/us/app/spotify-music-and-podcasts/id324684580" },
@@ -13,15 +14,16 @@ export function UrlComposer({
   busy,
   error,
 }: {
-  onSubmit: (url: string) => void;
+  onSubmit: (url: string, deepScan: boolean) => void;
   busy: boolean;
   error: string | null;
 }) {
   const [value, setValue] = useState("");
+  const [deepScan, setDeepScan] = useState(false);
 
   const submit = (e: React.FormEvent) => {
     e.preventDefault();
-    if (value.trim() && !busy) onSubmit(value.trim());
+    if (value.trim() && !busy) onSubmit(value.trim(), deepScan);
   };
 
   return (
@@ -43,21 +45,25 @@ export function UrlComposer({
         </button>
       </div>
 
-      <div className="examples">
-        {EXAMPLES.map((ex) => (
-          <button
-            key={ex.label}
-            type="button"
-            className="chip"
-            onClick={() => {
-              setValue(ex.url);
-              if (!busy) onSubmit(ex.url);
-            }}
-            disabled={busy}
-          >
-            {ex.label}
-          </button>
-        ))}
+      <div className="row2">
+        <div className="examples">
+          <span className="try label">Try</span>
+          {EXAMPLES.map((ex) => (
+            <button
+              key={ex.label}
+              type="button"
+              className="chip"
+              onClick={() => {
+                setValue(ex.url);
+                if (!busy) onSubmit(ex.url, deepScan);
+              }}
+              disabled={busy}
+            >
+              {ex.label}
+            </button>
+          ))}
+        </div>
+        <DeepScanToggle on={deepScan} onChange={setDeepScan} disabled={busy} />
       </div>
 
       {error && <p className="errline">{error}</p>}
@@ -131,12 +137,23 @@ export function UrlComposer({
           border-radius: 50%;
           animation: spin 0.7s linear infinite;
         }
+        .row2 {
+          display: flex;
+          align-items: center;
+          justify-content: space-between;
+          gap: 1rem;
+          flex-wrap: wrap;
+          padding: 0.15rem 0.15rem 0.15rem 0.2rem;
+        }
         .examples {
           display: flex;
           align-items: center;
           gap: 0.5rem;
           flex-wrap: wrap;
-          padding-left: 0.1rem;
+        }
+        .try { margin-right: 0.15rem; }
+        @media (max-width: 560px) {
+          .row2 { flex-direction: column; align-items: flex-start; gap: 0.75rem; }
         }
         .chip {
           background: var(--surface);

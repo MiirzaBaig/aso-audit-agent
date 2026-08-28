@@ -20,8 +20,17 @@ export interface OcrResult {
 const MAX_IMAGES = 2;
 const BUDGET_MS = 12_000;
 
-export async function ocrScreenshots(urls: string[]): Promise<OcrResult | null> {
-  if (env.ocrEnabled === false) return null;
+/**
+ * `override` lets a single request opt in/out regardless of the env default:
+ * the front-end "Deep scan" toggle passes it through per audit. When undefined
+ * we fall back to the ENABLE_OCR env setting.
+ */
+export async function ocrScreenshots(
+  urls: string[],
+  override?: boolean,
+): Promise<OcrResult | null> {
+  const enabled = override ?? env.ocrEnabled;
+  if (!enabled) return null;
   if (!urls.length) return null;
 
   const targets = urls.slice(0, MAX_IMAGES);

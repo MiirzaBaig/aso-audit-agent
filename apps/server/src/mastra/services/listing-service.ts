@@ -21,7 +21,10 @@ import { ocrScreenshots } from "../lib/screenshot-ocr.js";
 
 const round1 = (n: number) => Math.round(n * 10) / 10;
 
-export async function getAppListing(url: string): Promise<AppListing> {
+export async function getAppListing(
+  url: string,
+  opts: { deepScan?: boolean } = {},
+): Promise<AppListing> {
   const parsed = parseAppStoreUrl(url);
   if (!parsed) {
     throw new Error(
@@ -43,7 +46,7 @@ export async function getAppListing(url: string): Promise<AppListing> {
     scrapeListingExtras(storeUrl),
     detectAppPreviewVideo(storeUrl),
     fetchRecentReviews(appId, country),
-    ocrScreenshots(app.screenshotUrls ?? []),
+    ocrScreenshots(app.screenshotUrls ?? [], opts.deepScan),
   ]);
 
   const screenshotText =

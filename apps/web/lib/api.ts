@@ -25,11 +25,11 @@ export interface ApiError {
   error: string;
 }
 
-export async function startAudit(url: string): Promise<StartResponse> {
+export async function startAudit(url: string, deepScan = false): Promise<StartResponse> {
   const res = await fetch("/api/audit/start", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ url }),
+    body: JSON.stringify({ url, deepScan }),
   });
   const data = await res.json();
   if (!res.ok) throw new Error((data as ApiError).error ?? "Failed to start the audit.");

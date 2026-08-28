@@ -25,13 +25,13 @@ import { buildAuditReport } from "../lib/report.js";
 
 const resolveListing = createStep({
   id: "resolve-listing",
-  inputSchema: z.object({ url: z.string() }),
+  inputSchema: z.object({ url: z.string(), deepScan: z.boolean().optional() }),
   outputSchema: z.object({
     listing: appListingSchema,
     identity: appIdentitySchema,
   }),
   execute: async ({ inputData }) => {
-    const listing = await getAppListing(inputData.url);
+    const listing = await getAppListing(inputData.url, { deepScan: inputData.deepScan });
     const identity = {
       appId: listing.appId,
       country: listing.country,
@@ -99,7 +99,7 @@ const runAudit = createStep({
 
 export const asoAuditWorkflow = createWorkflow({
   id: "aso-audit",
-  inputSchema: z.object({ url: z.string() }),
+  inputSchema: z.object({ url: z.string(), deepScan: z.boolean().optional() }),
   outputSchema: z.object({
     report: auditReportSchema,
     competitors: z.array(competitorSchema),
