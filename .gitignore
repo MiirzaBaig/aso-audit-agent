@@ -1,0 +1,37 @@
+node_modules/
+dist/
+.next/
+.mastra/
+out/
+build/
+coverage/
+
+# env
+.env
+.env.local
+.env.*.local
+!.env.example
+
+# logs
+*.log
+npm-debug.log*
+pnpm-debug.log*
+
+# os / editor
+.DS_Store
+.idea/
+.vscode/*
+!.vscode/extensions.json
+*.tsbuildinfo
+
+# vercel
+.vercel
+
+# next
+next-env.d.ts
+
+# local sqlite (durable workflow runs)
+*.db
+*.db-shm
+*.db-wal
+aso-audit.db

@@ -1,0 +1,171 @@
+/* ============================================================
+   ASO Audit — design system
+   A "listing X-ray": clinical, precise, confident. Cool-biased
+   neutrals, one electric-indigo accent, semantic score colors
+   kept separate from the accent.
+   ============================================================ */
+
+:root {
+  /* neutrals — biased slightly cool toward the indigo accent, not pure grey */
+  --bg: #f6f7fb;
+  --bg-elevated: #ffffff;
+  --panel: #ffffff;
+  --panel-2: #f0f2f8;
+  --border: #e2e5ef;
+  --border-strong: #cfd4e4;
+  --ink: #14161f;
+  --ink-2: #444a5e;
+  --ink-3: #6c7286;
+  --ink-faint: #9aa0b4;
+
+  /* accent — electric indigo, App-Store-adjacent but distinct */
+  --accent: #5b5bf0;
+  --accent-strong: #4444e0;
+  --accent-soft: #ecebfe;
+  --accent-ink: #ffffff;
+
+  /* semantic score bands — NOT the accent */
+  --good: #17a673;
+  --good-soft: #d8f3e7;
+  --fair: #d98a1f;
+  --fair-soft: #fbeed6;
+  --poor: #dc4c4c;
+  --poor-soft: #fadede;
+
+  --shadow-sm: 0 1px 2px rgba(20, 22, 31, 0.04), 0 1px 3px rgba(20, 22, 31, 0.06);
+  --shadow-md: 0 4px 12px rgba(20, 22, 31, 0.06), 0 2px 4px rgba(20, 22, 31, 0.04);
+  --shadow-lg: 0 24px 48px -12px rgba(30, 30, 90, 0.18);
+
+  --radius: 14px;
+  --radius-sm: 9px;
+  --radius-lg: 22px;
+
+  --font-display: var(--font-display), ui-sans-serif, system-ui, sans-serif;
+  --font-body: var(--font-body), ui-sans-serif, system-ui, sans-serif;
+  --font-mono: var(--font-mono), ui-monospace, monospace;
+
+  --maxw: 1080px;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --bg: #0b0d14;
+    --bg-elevated: #12151f;
+    --panel: #141824;
+    --panel-2: #1b2030;
+    --border: #262c3e;
+    --border-strong: #333a52;
+    --ink: #eef0f7;
+    --ink-2: #b7bcce;
+    --ink-3: #878da3;
+    --ink-faint: #5c6178;
+
+    --accent: #7d7dff;
+    --accent-strong: #9a9aff;
+    --accent-soft: #1e1f45;
+    --accent-ink: #0b0d14;
+
+    --good: #35d492;
+    --good-soft: #0e2a20;
+    --fair: #f0ac4b;
+    --fair-soft: #2c2210;
+    --poor: #f26d6d;
+    --poor-soft: #2e1414;
+
+    --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.4);
+    --shadow-md: 0 6px 16px rgba(0, 0, 0, 0.45);
+    --shadow-lg: 0 30px 60px -12px rgba(0, 0, 0, 0.6);
+  }
+}
+
+/* explicit toggle wins over the media query in both directions */
+:root[data-theme="light"] {
+  --bg: #f6f7fb; --bg-elevated: #ffffff; --panel: #ffffff; --panel-2: #f0f2f8;
+  --border: #e2e5ef; --border-strong: #cfd4e4;
+  --ink: #14161f; --ink-2: #444a5e; --ink-3: #6c7286; --ink-faint: #9aa0b4;
+  --accent: #5b5bf0; --accent-strong: #4444e0; --accent-soft: #ecebfe; --accent-ink: #ffffff;
+  --good: #17a673; --good-soft: #d8f3e7; --fair: #d98a1f; --fair-soft: #fbeed6;
+  --poor: #dc4c4c; --poor-soft: #fadede;
+}
+:root[data-theme="dark"] {
+  --bg: #0b0d14; --bg-elevated: #12151f; --panel: #141824; --panel-2: #1b2030;
+  --border: #262c3e; --border-strong: #333a52;
+  --ink: #eef0f7; --ink-2: #b7bcce; --ink-3: #878da3; --ink-faint: #5c6178;
+  --accent: #7d7dff; --accent-strong: #9a9aff; --accent-soft: #1e1f45; --accent-ink: #0b0d14;
+  --good: #35d492; --good-soft: #0e2a20; --fair: #f0ac4b; --fair-soft: #2c2210;
+  --poor: #f26d6d; --poor-soft: #2e1414;
+}
+
+* { box-sizing: border-box; }
+
+html, body { padding: 0; margin: 0; }
+
+body {
+  background: var(--bg);
+  color: var(--ink);
+  font-family: var(--font-body);
+  font-feature-settings: "cv02", "cv03", "cv04";
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+  line-height: 1.5;
+}
+
+/* subtle grid-paper backdrop — the "diagnostic sheet" */
+body::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  background-image:
+    linear-gradient(var(--border) 1px, transparent 1px),
+    linear-gradient(90deg, var(--border) 1px, transparent 1px);
+  background-size: 44px 44px;
+  opacity: 0.35;
+  mask-image: radial-gradient(ellipse 80% 60% at 50% 0%, black, transparent 75%);
+  -webkit-mask-image: radial-gradient(ellipse 80% 60% at 50% 0%, black, transparent 75%);
+}
+
+h1, h2, h3, h4 {
+  font-family: var(--font-display);
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  text-wrap: balance;
+  margin: 0;
+}
+
+button { font-family: inherit; cursor: pointer; }
+
+a { color: var(--accent); text-decoration: none; }
+
+.mono { font-family: var(--font-mono); font-variant-numeric: tabular-nums; }
+
+/* App Store squircle-ish icon */
+.ic {
+  border-radius: 22%;
+  border: 1px solid var(--border);
+  object-fit: cover;
+  flex: none;
+}
+
+.eyebrow {
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--ink-3);
+}
+
+:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+  border-radius: 4px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.001ms !important;
+    transition-duration: 0.001ms !important;
+    scroll-behavior: auto !important;
+  }
+}
