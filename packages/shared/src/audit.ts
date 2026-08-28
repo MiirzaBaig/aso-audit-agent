@@ -81,6 +81,26 @@ export const competitorComparisonSchema = z.object({
 });
 export type CompetitorComparison = z.infer<typeof competitorComparisonSchema>;
 
+/**
+ * A complaint/praise theme mined from real reviews, carried with the actual
+ * reviews it was extracted from. This is the "prove it's not fabricated" data:
+ * the UI lets the user open a theme and read the source reviews verbatim.
+ */
+export const reviewThemeSchema = z.object({
+  theme: z.string(),
+  sentiment: z.enum(["complaint", "praise"]),
+  count: z.number().int().nonnegative(),
+  samples: z.array(
+    z.object({
+      rating: z.number().min(1).max(5),
+      title: z.string(),
+      body: z.string(),
+      author: z.string(),
+    }),
+  ),
+});
+export type ReviewTheme = z.infer<typeof reviewThemeSchema>;
+
 /** The complete audit the UI renders. */
 export const auditReportSchema = z.object({
   scoreCard: scoreCardSchema,
@@ -88,6 +108,10 @@ export const auditReportSchema = z.object({
   headline: z.string(),
   recommendations: z.array(recommendationSchema),
   competitorComparison: competitorComparisonSchema,
+  /** Themes mined from real reviews, each with the source reviews attached. */
+  reviewEvidence: z.array(reviewThemeSchema),
+  /** Total recent reviews analysed (for the "based on N real reviews" line). */
+  reviewsAnalysed: z.number().int().nonnegative(),
   /** Fields we could not observe and had to infer or skip. Shown as a caveat. */
   limitations: z.array(z.string()),
 });

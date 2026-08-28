@@ -6,6 +6,7 @@ import type {
 } from "@aso/shared";
 import { computeScoreCard } from "../scoring/index.js";
 import { synthesizeAnalysis } from "./synthesize.js";
+import { buildReviewEvidence } from "./review-evidence.js";
 
 /**
  * Assembles the final audit: compute scores deterministically, synthesize the
@@ -27,6 +28,8 @@ export async function buildAuditReport(
       competitors,
       narrative: output.competitorNarrative,
     },
+    reviewEvidence: buildReviewEvidence(listing),
+    reviewsAnalysed: listing.reviews.length,
     limitations: collectLimitations(listing, scoreCard),
   };
 

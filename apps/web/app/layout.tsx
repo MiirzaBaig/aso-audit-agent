@@ -1,35 +1,35 @@
 import type { Metadata } from "next";
-import { Bricolage_Grotesque, Inter, JetBrains_Mono } from "next/font/google";
+import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 
-// Display: Bricolage Grotesque — a characterful, slightly quirky grotesk that
-// gives the product a diagnostic-instrument personality without shouting.
-const display = Bricolage_Grotesque({
+// Geist — a precise, modern grotesk (the register Vercel/Linear ship in).
+// Used for both display and body to keep the system tight; weight does the work.
+const geist = Geist({
   subsets: ["latin"],
   variable: "--font-display",
-  weight: ["500", "600", "700", "800"],
+  weight: ["400", "500", "600", "700"],
 });
-
-// Body: Inter — clean, humanist, disappears so the data reads.
-const body = Inter({ subsets: ["latin"], variable: "--font-body" });
-
-// Data: JetBrains Mono — tabular figures for scores, char counts, ratings.
-const mono = JetBrains_Mono({
+const geistBody = Geist({
+  subsets: ["latin"],
+  variable: "--font-body",
+  weight: ["400", "500"],
+});
+const geistMono = Geist_Mono({
   subsets: ["latin"],
   variable: "--font-mono",
-  weight: ["400", "500", "700"],
+  weight: ["400", "500"],
 });
 
 export const metadata: Metadata = {
-  title: "ASO Audit — App Store listing X-ray",
+  title: "ASO Audit — score your App Store listing",
   description:
-    "Paste an App Store URL and get a grounded, prioritized App Store Optimization audit. Scores are computed, not guessed.",
+    "Paste an App Store URL and get a grounded App Store Optimization audit in seconds. Scores are computed from Apple's data, not guessed.",
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="en" suppressHydrationWarning>
-      <body className={`${display.variable} ${body.variable} ${mono.variable}`}>
+      <body className={`${geist.variable} ${geistBody.variable} ${geistMono.variable}`}>
         {children}
       </body>
     </html>

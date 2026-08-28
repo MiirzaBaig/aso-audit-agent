@@ -5,207 +5,174 @@ import { RECOMMENDATION_TIERS } from "@aso/shared";
 import { TIER_META } from "@/lib/score-format";
 
 /**
- * The prioritized action plan, grouped into the three tiers the brief asks for.
- * Text changes render as a before → after diff so the recommendation is
- * literally actionable, not just described.
+ * The ranked action plan as a single vertical reading column — no cards.
+ * Tiers are lightweight section headers; each recommendation is a row divided
+ * by a hairline rule. Text changes render as an inline from → to diff. This
+ * reads top-to-bottom like a well-set document, not a wall of boxes.
  */
 export function Recommendations({ recommendations }: { recommendations: Recommendation[] }) {
   return (
-    <div className="tiers">
+    <div className="plan">
       {RECOMMENDATION_TIERS.map((tier) => {
         const items = recommendations.filter((r) => r.tier === tier);
         if (!items.length) return null;
-        return <TierColumn key={tier} tier={tier} items={items} />;
+        return <TierBlock key={tier} tier={tier} items={items} />;
       })}
       <style jsx>{`
-        .tiers {
-          display: grid;
-          grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-          gap: 1.25rem;
-          align-items: start;
+        .plan {
+          display: flex;
+          flex-direction: column;
+          gap: 2.5rem;
         }
       `}</style>
     </div>
   );
 }
 
-function TierColumn({ tier, items }: { tier: RecommendationTier; items: Recommendation[] }) {
+function TierBlock({ tier, items }: { tier: RecommendationTier; items: Recommendation[] }) {
   const meta = TIER_META[tier];
   return (
-    <section className="col">
+    <section className="tier">
       <header>
-        <span className="sym" aria-hidden>{meta.symbol}</span>
-        <div>
-          <h3>{meta.label}</h3>
-          <span className="blurb">{meta.blurb}</span>
-        </div>
+        <span className="mark mono">{meta.mark}</span>
+        <h4>{meta.label}</h4>
+        <span className="blurb">{meta.blurb}</span>
         <span className="count mono">{items.length}</span>
       </header>
-      <div className="cards">
+
+      <ol className="rows">
         {items.map((r, i) => (
-          <RecCard key={i} rec={r} />
+          <RecRow key={i} rec={r} />
         ))}
-      </div>
+      </ol>
+
       <style jsx>{`
-        .col {
-          display: flex;
-          flex-direction: column;
-          gap: 0.9rem;
-        }
+        .tier { display: flex; flex-direction: column; }
         header {
           display: flex;
-          align-items: center;
-          gap: 0.65rem;
-          padding-bottom: 0.6rem;
-          border-bottom: 2px solid var(--border-strong);
+          align-items: baseline;
+          gap: 0.7rem;
+          padding-bottom: 0.85rem;
+          border-bottom: 1px solid var(--ink);
+          margin-bottom: 0.25rem;
         }
-        .sym {
-          font-size: 1.05rem;
-          color: var(--accent);
-        }
-        h3 {
-          font-size: 1rem;
-          font-weight: 700;
-        }
-        .blurb {
-          font-size: 0.72rem;
-          color: var(--ink-3);
-        }
-        .count {
-          margin-left: auto;
-          font-size: 0.8rem;
-          font-weight: 700;
-          color: var(--accent);
-          background: var(--accent-soft);
-          border-radius: 999px;
-          min-width: 1.6rem;
-          height: 1.6rem;
-          display: grid;
-          place-items: center;
-        }
-        .cards {
-          display: flex;
-          flex-direction: column;
-          gap: 0.9rem;
-        }
+        .mark { font-size: 0.8rem; color: var(--accent); font-weight: 500; }
+        h4 { font-size: 1.05rem; font-weight: 600; }
+        .blurb { font-size: 0.78rem; color: var(--ink-3); }
+        .count { margin-left: auto; font-size: 0.78rem; color: var(--ink-4); }
+        .rows { list-style: none; margin: 0; padding: 0; }
       `}</style>
     </section>
   );
 }
 
-function RecCard({ rec }: { rec: Recommendation }) {
+function RecRow({ rec }: { rec: Recommendation }) {
   const hasDiff = rec.before !== null || rec.after !== null;
   return (
-    <article className="card">
-      <div className="dim mono">{rec.dimension}</div>
-      <h4>{rec.title}</h4>
-      <p className="rationale">{rec.rationale}</p>
+    <li className="row">
+      <div className="meta">
+        <span className="dim label">{rec.dimension}</span>
+      </div>
 
-      {hasDiff && (
-        <div className="diff">
-          <div className="line before">
-            <span className="k mono">before</span>
-            <span className="v">{rec.before ?? "—"}</span>
-          </div>
-          <div className="line after">
-            <span className="k mono">after</span>
-            <span className="v">{rec.after ?? "—"}</span>
-          </div>
-        </div>
-      )}
+      <div className="content">
+        <h5>{rec.title}</h5>
+        <p className="rationale">{rec.rationale}</p>
 
-      <div className="evidence">
-        <span className="dot" aria-hidden />
-        {rec.evidence}
+        {hasDiff && (
+          <div className="diff">
+            <div className="d-line">
+              <span className="d-k mono from">from</span>
+              <span className="d-v old">{rec.before ?? "—"}</span>
+            </div>
+            <div className="d-line">
+              <span className="d-k mono to">to</span>
+              <span className="d-v new">{rec.after ?? "—"}</span>
+            </div>
+          </div>
+        )}
+
+        <p className="evidence">{rec.evidence}</p>
       </div>
 
       <style jsx>{`
-        .card {
-          background: var(--panel);
-          border: 1px solid var(--border);
-          border-radius: var(--radius);
-          padding: 1rem 1.05rem;
-          box-shadow: var(--shadow-sm);
-          display: flex;
-          flex-direction: column;
-          gap: 0.55rem;
-          transition: border-color 0.15s, transform 0.15s, box-shadow 0.15s;
+        .row {
+          display: grid;
+          grid-template-columns: 130px 1fr;
+          gap: 1.5rem;
+          padding: 1.4rem 0;
+          border-bottom: 1px solid var(--line);
         }
-        .card:hover {
-          border-color: var(--border-strong);
-          transform: translateY(-2px);
-          box-shadow: var(--shadow-md);
-        }
-        .dim {
-          font-size: 0.66rem;
-          text-transform: uppercase;
-          letter-spacing: 0.08em;
-          color: var(--ink-faint);
-        }
-        h4 {
-          font-size: 0.98rem;
-          font-weight: 700;
-          line-height: 1.3;
+        .row:last-child { border-bottom: none; }
+        .meta { padding-top: 0.2rem; }
+        .dim { color: var(--ink-4); }
+        .content { min-width: 0; display: flex; flex-direction: column; gap: 0.55rem; }
+        h5 {
           font-family: var(--font-display);
+          font-size: 1.02rem;
+          font-weight: 600;
+          line-height: 1.3;
+          letter-spacing: -0.02em;
+          max-width: 62ch;
         }
         .rationale {
           margin: 0;
-          font-size: 0.86rem;
+          font-size: 0.9rem;
           color: var(--ink-2);
-          line-height: 1.5;
+          line-height: 1.6;
+          max-width: 68ch;
         }
         .diff {
           display: flex;
           flex-direction: column;
-          gap: 1px;
-          border-radius: var(--radius-sm);
-          overflow: hidden;
-          border: 1px solid var(--border);
+          gap: 0.35rem;
+          margin: 0.35rem 0 0.15rem;
+          max-width: 70ch;
         }
-        .line {
+        .d-line {
           display: grid;
-          grid-template-columns: 4.2rem 1fr;
-          gap: 0.5rem;
-          padding: 0.5rem 0.65rem;
-          font-size: 0.82rem;
+          grid-template-columns: 3rem 1fr;
+          gap: 0.75rem;
+          align-items: start;
         }
-        .before {
-          background: var(--poor-soft);
-        }
-        .after {
-          background: var(--good-soft);
-        }
-        .k {
+        .d-k {
           font-size: 0.64rem;
           text-transform: uppercase;
-          letter-spacing: 0.06em;
-          padding-top: 0.12rem;
+          letter-spacing: 0.07em;
+          padding-top: 0.2rem;
         }
-        .before .k { color: var(--poor); }
-        .after .k { color: var(--good); }
-        .v {
-          color: var(--ink);
+        .from { color: var(--ink-4); }
+        .to { color: var(--good); }
+        .d-v {
+          font-size: 0.88rem;
+          line-height: 1.5;
           word-break: break-word;
-          line-height: 1.4;
+          padding: 0.3rem 0.65rem;
+          border-radius: var(--r-xs);
+        }
+        .old {
+          color: var(--ink-3);
+          background: var(--surface-2);
+          text-decoration: line-through;
+          text-decoration-color: var(--ink-4);
+        }
+        .new {
+          color: var(--ink);
+          background: var(--good-wash);
+          box-shadow: inset 2px 0 0 var(--good);
         }
         .evidence {
-          display: flex;
-          gap: 0.5rem;
-          font-size: 0.76rem;
-          color: var(--ink-3);
-          font-style: italic;
-          line-height: 1.45;
-          padding-top: 0.15rem;
+          margin: 0.2rem 0 0;
+          font-size: 0.78rem;
+          color: var(--ink-4);
+          line-height: 1.5;
+          font-family: var(--font-mono);
+          max-width: 70ch;
         }
-        .dot {
-          flex: none;
-          margin-top: 0.4rem;
-          width: 5px;
-          height: 5px;
-          border-radius: 50%;
-          background: var(--accent);
+        @media (max-width: 640px) {
+          .row { grid-template-columns: 1fr; gap: 0.6rem; }
+          .meta { padding-top: 0; }
         }
       `}</style>
-    </article>
+    </li>
   );
 }

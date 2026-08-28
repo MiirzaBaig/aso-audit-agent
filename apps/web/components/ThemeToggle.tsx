@@ -46,8 +46,8 @@ export function ThemeToggle() {
           display: grid;
           place-items: center;
           border-radius: 50%;
-          border: 1px solid var(--border);
-          background: var(--panel);
+          border: 1px solid var(--line);
+          background: var(--surface);
           color: var(--ink-2);
           font-size: 1rem;
           transition: border-color 0.15s, color 0.15s, transform 0.15s;

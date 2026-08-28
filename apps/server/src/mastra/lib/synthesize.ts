@@ -43,13 +43,44 @@ export async function synthesizeAnalysis(
     const output = (result as { object?: AnalystOutput }).object;
     if (output) {
       const parsed = analystOutputSchema.safeParse(output);
-      if (parsed.success) return { output: parsed.data, source: "llm" };
+      if (parsed.success) return { output: sanitize(parsed.data), source: "llm" };
     }
     // Fall through to template if the model returned nothing usable.
     return { output: buildTemplateAnalysis(listing, scoreCard, competitors), source: "template" };
   } catch {
     return { output: buildTemplateAnalysis(listing, scoreCard, competitors), source: "template" };
   }
+}
+
+/**
+ * Strips model-authored bookkeeping the LLM sometimes appends into prose —
+ * parenthetical "(provenance: …)", "(character count = …)", "(N chars)" and
+ * trailing "– …" scaffolding — so the recommendations read like finished copy,
+ * not like an annotated draft. Purely cosmetic; the schema is unchanged.
+ */
+function sanitize(o: AnalystOutput): AnalystOutput {
+  const clean = (s: string): string =>
+    s
+      .replace(/\s*\((?:provenance|source)\s*[:=][^)]*\)/gi, "")
+      .replace(/\s*\(character count\s*=\s*\d+\)/gi, "")
+      .replace(/\s*\((?:~?\d+\s*chars?)\)/gi, (m) => m) // keep helpful char hints
+      .replace(/\s{2,}/g, " ")
+      .trim();
+
+  const cleanNullable = (s: string | null): string | null => (s == null ? s : clean(s));
+
+  return {
+    headline: clean(o.headline),
+    competitorNarrative: clean(o.competitorNarrative),
+    recommendations: o.recommendations.map((r) => ({
+      ...r,
+      title: clean(r.title),
+      rationale: clean(r.rationale),
+      evidence: clean(r.evidence),
+      before: cleanNullable(r.before),
+      after: cleanNullable(r.after),
+    })),
+  };
 }
 
 function buildPrompt(

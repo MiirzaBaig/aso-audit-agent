@@ -9,9 +9,9 @@ interface Props {
 }
 
 /**
- * The hero of the report: a radial gauge that animates the arc and counts the
- * number up on mount. The arc color is semantic (good/fair/poor), deliberately
- * distinct from the indigo accent.
+ * The report's headline instrument: a radial gauge whose arc animates in and
+ * whose number counts up once on mount. Arc color is semantic (good/fair/poor),
+ * deliberately distinct from the cobalt accent.
  */
 export function ScoreGauge({ overall, grade }: Props) {
   const [n, setN] = useState(0);
@@ -24,10 +24,10 @@ export function ScoreGauge({ overall, grade }: Props) {
       return;
     }
     const start = performance.now();
-    const dur = 1100;
+    const dur = 1150;
     const tick = (t: number) => {
       const p = Math.min(1, (t - start) / dur);
-      const eased = 1 - Math.pow(1 - p, 3); // easeOutCubic
+      const eased = 1 - Math.pow(1 - p, 3);
       setN(Math.round(eased * overall));
       if (p < 1) raf.current = requestAnimationFrame(tick);
     };
@@ -35,77 +35,90 @@ export function ScoreGauge({ overall, grade }: Props) {
     return () => cancelAnimationFrame(raf.current);
   }, [overall]);
 
-  const R = 78;
+  const R = 82;
   const C = 2 * Math.PI * R;
   const pct = n / 100;
   const color = bandColor(overall, 100);
+  const grades = ["A", "B", "C", "D", "F"] as const;
 
   return (
     <div className="gauge">
-      <svg viewBox="0 0 200 200" width="200" height="200" role="img" aria-label={`Overall ASO score ${overall} out of 100`}>
-        <circle cx="100" cy="100" r={R} fill="none" stroke="var(--border)" strokeWidth="12" />
+      <svg viewBox="0 0 200 200" width="184" height="184" role="img" aria-label={`Overall ASO score ${overall} out of 100`}>
+        <circle cx="100" cy="100" r={R} fill="none" stroke="var(--surface-2)" strokeWidth="8" />
         <circle
           cx="100"
           cy="100"
           r={R}
           fill="none"
           stroke={color}
-          strokeWidth="12"
+          strokeWidth="8"
           strokeLinecap="round"
           strokeDasharray={C}
           strokeDashoffset={C * (1 - pct)}
           transform="rotate(-90 100 100)"
           style={{ transition: "stroke-dashoffset 0.05s linear" }}
         />
-        <text x="100" y="96" textAnchor="middle" className="num mono" fill="var(--ink)">
-          {n}
-        </text>
-        <text x="100" y="120" textAnchor="middle" className="denom mono" fill="var(--ink-faint)">
-          / 100
-        </text>
+        <text x="100" y="98" textAnchor="middle" className="num mono">{n}</text>
+        <text x="100" y="122" textAnchor="middle" className="denom mono">out of 100</text>
       </svg>
-      <div className="meta">
-        <span className="grade-pill" style={{ color, borderColor: color }}>
-          Grade {grade}
-        </span>
-        <p>{GRADE_BLURB[grade] ?? ""}</p>
+
+      <div className="grades" role="presentation">
+        {grades.map((g) => (
+          <span key={g} className={`g ${g === grade ? "on" : ""}`} style={g === grade ? { color, borderColor: color } : undefined}>
+            {g}
+          </span>
+        ))}
       </div>
+      <p className="blurb">{GRADE_BLURB[grade] ?? ""}</p>
 
       <style jsx>{`
         .gauge {
           display: flex;
           flex-direction: column;
           align-items: center;
-          gap: 0.75rem;
+          gap: 0.85rem;
         }
         .num {
-          font-size: 3.2rem;
-          font-weight: 700;
+          font-size: 3.1rem;
+          font-weight: 600;
+          fill: var(--ink);
+          letter-spacing: -0.03em;
         }
         .denom {
-          font-size: 0.9rem;
+          font-size: 0.72rem;
+          fill: var(--ink-4);
+          letter-spacing: 0.08em;
+          text-transform: uppercase;
         }
-        .meta {
-          text-align: center;
+        .grades {
           display: flex;
-          flex-direction: column;
-          align-items: center;
-          gap: 0.4rem;
+          gap: 0.3rem;
         }
-        .grade-pill {
+        .g {
+          width: 26px;
+          height: 26px;
+          display: grid;
+          place-items: center;
+          border-radius: 7px;
+          border: 1px solid var(--line);
           font-family: var(--font-mono);
           font-size: 0.78rem;
-          font-weight: 700;
-          letter-spacing: 0.04em;
-          padding: 0.25rem 0.7rem;
-          border: 1.5px solid;
-          border-radius: 999px;
+          font-weight: 500;
+          color: var(--ink-4);
+          background: var(--surface);
+          transition: transform 0.2s var(--ease);
         }
-        .meta p {
+        .g.on {
+          font-weight: 700;
+          transform: scale(1.12);
+          background: var(--surface);
+        }
+        .blurb {
           margin: 0;
-          font-size: 0.85rem;
+          font-size: 0.82rem;
           color: var(--ink-3);
-          max-width: 22ch;
+          max-width: 24ch;
+          text-align: center;
         }
       `}</style>
     </div>

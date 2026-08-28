@@ -6,7 +6,7 @@ import { startAudit, resumeAudit, type AuditResult } from "@/lib/api";
 import { ThemeToggle, ThemeScript } from "@/components/ThemeToggle";
 import { UrlComposer } from "@/components/UrlComposer";
 import { ConfirmCard } from "@/components/ConfirmCard";
-import { ProgressLog } from "@/components/ProgressLog";
+import { AuditingSkeleton } from "@/components/AuditingSkeleton";
 import { ReportView } from "@/components/ReportView";
 
 type Phase =
@@ -20,7 +20,7 @@ export default function Home() {
   const [phase, setPhase] = useState<Phase>({ step: "idle" });
   const [error, setError] = useState<string | null>(null);
 
-  const busy = phase.step === "resolving" || phase.step === "auditing";
+  const busy = phase.step === "resolving";
 
   async function handleStart(url: string) {
     setError(null);
@@ -60,27 +60,48 @@ export default function Home() {
       <main>
         <header className="topbar">
           <button className="brand" onClick={reset} aria-label="ASO Audit home">
-            <span className="glyph" aria-hidden>◎</span>
-            <span className="wordmark">ASO<span className="dot">.</span>audit</span>
+            <span className="mark" aria-hidden />
+            <span className="wordmark">ASO<span className="thin"> audit</span></span>
           </button>
-          <ThemeToggle />
+          <div className="topright">
+            <a
+              className="ghost-link"
+              href="https://mastra.ai"
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              Built with Mastra ↗
+            </a>
+            <ThemeToggle />
+          </div>
         </header>
 
         <div className="stage">
           {showHero && (
             <section className="hero">
-              <span className="kicker eyebrow">App Store Optimization · listing X-ray</span>
-              <h1>
-                Paste a listing.
+              <span className="label reveal" style={{ ["--i" as string]: 0 }}>
+                App Store Optimization
+              </span>
+              <h1 className="reveal" style={{ ["--i" as string]: 1 }}>
+                Score your App Store
                 <br />
-                Get the <span className="grad">audit it deserves</span>.
+                listing in <span className="hl">20 seconds</span>.
               </h1>
-              <p className="sub">
-                Every score is <strong>computed from Apple&apos;s public data</strong>, not
-                guessed by a model. You get a graded scorecard and a prioritized plan with
-                real before/after rewrites.
+              <p className="sub reveal" style={{ ["--i" as string]: 2 }}>
+                Paste a listing. Every score is computed straight from Apple&apos;s public
+                data — not guessed by a model. You get a graded card and a ranked plan with
+                real before / after rewrites.
               </p>
-              <UrlComposer onSubmit={handleStart} busy={busy} error={error} />
+              <div className="reveal composer-wrap" style={{ ["--i" as string]: 3 }}>
+                <UrlComposer onSubmit={handleStart} busy={busy} error={error} />
+              </div>
+              <div className="reveal proof" style={{ ["--i" as string]: 4 }}>
+                <Stat k="10" v="dimensions scored" />
+                <Divider />
+                <Stat k="100" v="point scale" />
+                <Divider />
+                <Stat k="0" v="numbers guessed" />
+              </div>
             </section>
           )}
 
@@ -96,179 +117,176 @@ export default function Home() {
           )}
 
           {phase.step === "auditing" && (
-            <div className="flow">
-              <Confirmed identity={phase.identity} />
-              <ProgressLog />
+            <div className="flow wide">
+              <AuditingSkeleton identity={phase.identity} />
             </div>
           )}
 
           {phase.step === "done" && (
             <div className="flow wide">
-              <div className="result-head">
-                <button className="again" onClick={reset}>← Audit another app</button>
-              </div>
+              <button className="again" onClick={reset}>
+                ← Audit another app
+              </button>
               <ReportView identity={phase.identity} result={phase.result} />
             </div>
           )}
         </div>
 
         <footer className="foot">
-          <span>Built with Mastra · agents, tools, a suspend/resume workflow &amp; a skill</span>
+          <span className="label">agents · tools · suspend/resume workflow · skill</span>
         </footer>
       </main>
 
       <style jsx>{`
         main {
           position: relative;
-          z-index: 1;
           min-height: 100dvh;
           display: flex;
           flex-direction: column;
           max-width: var(--maxw);
           margin: 0 auto;
-          padding: 0 1.25rem;
+          padding: 0 1.5rem;
         }
         .topbar {
           display: flex;
           align-items: center;
           justify-content: space-between;
-          padding: 1.25rem 0;
+          padding: 1.5rem 0;
+          border-bottom: 1px solid var(--line);
         }
         .brand {
           display: flex;
           align-items: center;
-          gap: 0.55rem;
+          gap: 0.6rem;
           background: none;
           border: none;
           padding: 0;
         }
-        .glyph {
-          color: var(--accent);
-          font-size: 1.4rem;
+        .mark {
+          width: 22px;
+          height: 22px;
+          border-radius: 6px;
+          background: var(--accent);
+          box-shadow: inset 0 0 0 3px var(--bg), 0 0 0 1px var(--accent);
+          transition: transform 0.3s var(--ease);
         }
+        .brand:hover .mark { transform: rotate(90deg); }
         .wordmark {
           font-family: var(--font-display);
-          font-weight: 800;
-          font-size: 1.15rem;
-          letter-spacing: -0.03em;
-          color: var(--ink);
+          font-weight: 600;
+          font-size: 1.05rem;
+          letter-spacing: -0.04em;
         }
-        .dot { color: var(--accent); }
+        .thin { color: var(--ink-3); font-weight: 400; }
+        .topright {
+          display: flex;
+          align-items: center;
+          gap: 1rem;
+        }
+        .ghost-link {
+          font-size: 0.82rem;
+          color: var(--ink-3);
+          transition: color 0.15s;
+        }
+        .ghost-link:hover { color: var(--ink); }
         .stage {
           flex: 1;
           display: flex;
           flex-direction: column;
           justify-content: center;
-          padding: 2rem 0 4rem;
+          padding: 3rem 0 4rem;
         }
         .hero {
           display: flex;
           flex-direction: column;
-          gap: 1.15rem;
-          max-width: 640px;
-          margin: 0 auto;
-          text-align: center;
-          align-items: center;
+          gap: 1.4rem;
+          max-width: 660px;
+          align-items: flex-start;
         }
-        .kicker { margin-bottom: 0.25rem; }
         h1 {
-          font-size: clamp(2.2rem, 6vw, 3.4rem);
-          line-height: 1.04;
-          font-weight: 800;
+          font-size: clamp(2.4rem, 6.5vw, 4rem);
+          line-height: 1.02;
+          font-weight: 600;
         }
-        .grad {
-          background: linear-gradient(100deg, var(--accent), var(--accent-strong));
-          -webkit-background-clip: text;
-          background-clip: text;
-          color: transparent;
-        }
+        .hl { color: var(--accent); }
         .sub {
-          font-size: 1.02rem;
+          font-size: 1.08rem;
           color: var(--ink-2);
           line-height: 1.6;
-          max-width: 52ch;
-          margin: 0 0 0.5rem;
+          max-width: 54ch;
+          margin: 0;
         }
-        .sub strong { color: var(--ink); font-weight: 600; }
+        .composer-wrap { width: 100%; max-width: 620px; }
+        .proof {
+          display: flex;
+          align-items: center;
+          gap: 1.5rem;
+          margin-top: 0.5rem;
+        }
         .flow {
           width: 100%;
           max-width: 560px;
           margin: 0 auto;
           display: flex;
           flex-direction: column;
-          gap: 1rem;
+          gap: 1.25rem;
         }
-        .flow.wide {
-          max-width: var(--maxw);
-        }
-        .result-head {
-          display: flex;
-        }
+        .flow.wide { max-width: var(--maxw); }
         .again {
+          align-self: flex-start;
           background: none;
           border: none;
           color: var(--ink-3);
           font-size: 0.88rem;
           padding: 0.3rem 0;
-          transition: color 0.12s;
+          transition: color 0.15s, transform 0.15s;
         }
-        .again:hover { color: var(--accent); }
+        .again:hover { color: var(--accent); transform: translateX(-3px); }
         .foot {
-          padding: 1.5rem 0 2rem;
+          padding: 1.75rem 0;
           text-align: center;
-          font-size: 0.78rem;
-          color: var(--ink-faint);
-          border-top: 1px solid var(--border);
+          border-top: 1px solid var(--line);
         }
-        @media (max-width: 520px) {
-          .stage { padding: 1rem 0 3rem; }
+        @media (max-width: 560px) {
+          .proof { flex-wrap: wrap; gap: 1rem; }
+          .stage { padding: 1.5rem 0 3rem; }
         }
       `}</style>
     </>
   );
 }
 
-/** Small confirmed-app strip shown above the progress log. */
-function Confirmed({ identity }: { identity: AppIdentity }) {
+function Stat({ k, v }: { k: string; v: string }) {
   return (
-    <div className="confirmed">
-      {/* eslint-disable-next-line @next/next/no-img-element */}
-      <img src={identity.iconUrl} alt="" width={40} height={40} className="ic" />
-      <div>
-        <strong>{identity.name}</strong>
-        <span>{identity.developer}</span>
-      </div>
-      <span className="ok mono">confirmed</span>
+    <div className="stat">
+      <span className="k mono">{k}</span>
+      <span className="v">{v}</span>
       <style jsx>{`
-        .confirmed {
-          display: flex;
-          align-items: center;
-          gap: 0.75rem;
-          background: var(--panel);
-          border: 1px solid var(--border);
-          border-radius: var(--radius);
-          padding: 0.75rem 1rem;
-          box-shadow: var(--shadow-sm);
-        }
-        .confirmed div {
+        .stat {
           display: flex;
           flex-direction: column;
-          min-width: 0;
+          gap: 0.1rem;
         }
-        strong { font-size: 0.95rem; }
-        span { font-size: 0.8rem; color: var(--ink-3); }
-        .ok {
-          margin-left: auto;
-          font-size: 0.68rem;
-          text-transform: uppercase;
-          letter-spacing: 0.06em;
-          color: var(--good);
-          background: var(--good-soft);
-          padding: 0.2rem 0.55rem;
-          border-radius: 6px;
+        .k {
+          font-size: 1.5rem;
+          font-weight: 600;
+          color: var(--ink);
+          line-height: 1;
         }
-        .ic { width: 40px; height: 40px; }
+        .v {
+          font-size: 0.76rem;
+          color: var(--ink-3);
+        }
       `}</style>
     </div>
+  );
+}
+
+function Divider() {
+  return (
+    <span
+      aria-hidden
+      style={{ width: 1, height: 30, background: "var(--line-2)", flex: "none" }}
+    />
   );
 }

@@ -1,171 +1,196 @@
 /* ============================================================
-   ASO Audit — design system
-   A "listing X-ray": clinical, precise, confident. Cool-biased
-   neutrals, one electric-indigo accent, semantic score colors
-   kept separate from the accent.
+   ASO Audit — design system  ·  "Swiss precision"
+   Near-white ground, true-ink type, one cobalt accent used
+   sparingly. Hairline rules, big air, mono micro-labels.
+   Motion is choreographed and calm — never decorative loops.
    ============================================================ */
 
 :root {
-  /* neutrals — biased slightly cool toward the indigo accent, not pure grey */
-  --bg: #f6f7fb;
-  --bg-elevated: #ffffff;
-  --panel: #ffffff;
-  --panel-2: #f0f2f8;
-  --border: #e2e5ef;
-  --border-strong: #cfd4e4;
-  --ink: #14161f;
-  --ink-2: #444a5e;
-  --ink-3: #6c7286;
-  --ink-faint: #9aa0b4;
+  /* neutrals — a whisper of warmth, not cream, not cold blue */
+  --bg: #fbfbfa;
+  --surface: #ffffff;
+  --surface-2: #f5f5f4;
+  --line: #e8e7e4;
+  --line-2: #dcdbd7;
+  --ink: #0a0a0a;
+  --ink-2: #3f3f3c;
+  --ink-3: #6b6b66;
+  --ink-4: #9c9c96;
 
-  /* accent — electric indigo, App-Store-adjacent but distinct */
-  --accent: #5b5bf0;
-  --accent-strong: #4444e0;
-  --accent-soft: #ecebfe;
-  --accent-ink: #ffffff;
+  /* one accent — confident cobalt/indigo, used with restraint */
+  --accent: #3538cd;
+  --accent-2: #4f52e6;
+  --accent-wash: #eeeefb;
+  --on-accent: #ffffff;
 
-  /* semantic score bands — NOT the accent */
-  --good: #17a673;
-  --good-soft: #d8f3e7;
-  --fair: #d98a1f;
-  --fair-soft: #fbeed6;
-  --poor: #dc4c4c;
-  --poor-soft: #fadede;
+  /* muted semantic bands (not candy) */
+  --good: #2f8f5b;
+  --good-wash: #e9f4ee;
+  --fair: #b5822a;
+  --fair-wash: #f7efe0;
+  --poor: #c0473f;
+  --poor-wash: #f8e9e7;
 
-  --shadow-sm: 0 1px 2px rgba(20, 22, 31, 0.04), 0 1px 3px rgba(20, 22, 31, 0.06);
-  --shadow-md: 0 4px 12px rgba(20, 22, 31, 0.06), 0 2px 4px rgba(20, 22, 31, 0.04);
-  --shadow-lg: 0 24px 48px -12px rgba(30, 30, 90, 0.18);
+  --shadow-1: 0 1px 2px rgba(10, 10, 10, 0.04);
+  --shadow-2: 0 2px 8px rgba(10, 10, 10, 0.05), 0 1px 2px rgba(10, 10, 10, 0.04);
+  --shadow-3: 0 12px 32px -8px rgba(20, 20, 40, 0.14);
 
-  --radius: 14px;
-  --radius-sm: 9px;
-  --radius-lg: 22px;
+  --r-xs: 7px;
+  --r-sm: 10px;
+  --r-md: 14px;
+  --r-lg: 20px;
 
-  --font-display: var(--font-display), ui-sans-serif, system-ui, sans-serif;
+  --font-display: var(--font-display), "Helvetica Neue", ui-sans-serif, system-ui, sans-serif;
   --font-body: var(--font-body), ui-sans-serif, system-ui, sans-serif;
-  --font-mono: var(--font-mono), ui-monospace, monospace;
+  --font-mono: var(--font-mono), ui-monospace, "SF Mono", monospace;
 
-  --maxw: 1080px;
+  --maxw: 1120px;
+  --ease: cubic-bezier(0.22, 1, 0.36, 1);
 }
 
 @media (prefers-color-scheme: dark) {
   :root {
-    --bg: #0b0d14;
-    --bg-elevated: #12151f;
-    --panel: #141824;
-    --panel-2: #1b2030;
-    --border: #262c3e;
-    --border-strong: #333a52;
-    --ink: #eef0f7;
-    --ink-2: #b7bcce;
-    --ink-3: #878da3;
-    --ink-faint: #5c6178;
+    --bg: #0a0a0b;
+    --surface: #121214;
+    --surface-2: #1a1a1d;
+    --line: #262629;
+    --line-2: #34343a;
+    --ink: #f4f4f2;
+    --ink-2: #c2c2bd;
+    --ink-3: #8f8f89;
+    --ink-4: #616159;
 
-    --accent: #7d7dff;
-    --accent-strong: #9a9aff;
-    --accent-soft: #1e1f45;
-    --accent-ink: #0b0d14;
+    --accent: #7d80ff;
+    --accent-2: #9a9cff;
+    --accent-wash: #17182f;
+    --on-accent: #0a0a0b;
 
-    --good: #35d492;
-    --good-soft: #0e2a20;
-    --fair: #f0ac4b;
-    --fair-soft: #2c2210;
-    --poor: #f26d6d;
-    --poor-soft: #2e1414;
+    --good: #4bc484;
+    --good-wash: #10241a;
+    --fair: #e0a94e;
+    --fair-wash: #2a2110;
+    --poor: #e8746b;
+    --poor-wash: #2c1512;
 
-    --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.4);
-    --shadow-md: 0 6px 16px rgba(0, 0, 0, 0.45);
-    --shadow-lg: 0 30px 60px -12px rgba(0, 0, 0, 0.6);
+    --shadow-1: 0 1px 2px rgba(0, 0, 0, 0.5);
+    --shadow-2: 0 2px 10px rgba(0, 0, 0, 0.5);
+    --shadow-3: 0 16px 40px -8px rgba(0, 0, 0, 0.7);
   }
 }
 
-/* explicit toggle wins over the media query in both directions */
 :root[data-theme="light"] {
-  --bg: #f6f7fb; --bg-elevated: #ffffff; --panel: #ffffff; --panel-2: #f0f2f8;
-  --border: #e2e5ef; --border-strong: #cfd4e4;
-  --ink: #14161f; --ink-2: #444a5e; --ink-3: #6c7286; --ink-faint: #9aa0b4;
-  --accent: #5b5bf0; --accent-strong: #4444e0; --accent-soft: #ecebfe; --accent-ink: #ffffff;
-  --good: #17a673; --good-soft: #d8f3e7; --fair: #d98a1f; --fair-soft: #fbeed6;
-  --poor: #dc4c4c; --poor-soft: #fadede;
+  --bg: #fbfbfa; --surface: #ffffff; --surface-2: #f5f5f4;
+  --line: #e8e7e4; --line-2: #dcdbd7;
+  --ink: #0a0a0a; --ink-2: #3f3f3c; --ink-3: #6b6b66; --ink-4: #9c9c96;
+  --accent: #3538cd; --accent-2: #4f52e6; --accent-wash: #eeeefb; --on-accent: #ffffff;
+  --good: #2f8f5b; --good-wash: #e9f4ee; --fair: #b5822a; --fair-wash: #f7efe0;
+  --poor: #c0473f; --poor-wash: #f8e9e7;
 }
 :root[data-theme="dark"] {
-  --bg: #0b0d14; --bg-elevated: #12151f; --panel: #141824; --panel-2: #1b2030;
-  --border: #262c3e; --border-strong: #333a52;
-  --ink: #eef0f7; --ink-2: #b7bcce; --ink-3: #878da3; --ink-faint: #5c6178;
-  --accent: #7d7dff; --accent-strong: #9a9aff; --accent-soft: #1e1f45; --accent-ink: #0b0d14;
-  --good: #35d492; --good-soft: #0e2a20; --fair: #f0ac4b; --fair-soft: #2c2210;
-  --poor: #f26d6d; --poor-soft: #2e1414;
+  --bg: #0a0a0b; --surface: #121214; --surface-2: #1a1a1d;
+  --line: #262629; --line-2: #34343a;
+  --ink: #f4f4f2; --ink-2: #c2c2bd; --ink-3: #8f8f89; --ink-4: #616159;
+  --accent: #7d80ff; --accent-2: #9a9cff; --accent-wash: #17182f; --on-accent: #0a0a0b;
+  --good: #4bc484; --good-wash: #10241a; --fair: #e0a94e; --fair-wash: #2a2110;
+  --poor: #e8746b; --poor-wash: #2c1512;
 }
 
 * { box-sizing: border-box; }
-
 html, body { padding: 0; margin: 0; }
 
 body {
   background: var(--bg);
   color: var(--ink);
   font-family: var(--font-body);
-  font-feature-settings: "cv02", "cv03", "cv04";
   -webkit-font-smoothing: antialiased;
   text-rendering: optimizeLegibility;
-  line-height: 1.5;
-}
-
-/* subtle grid-paper backdrop — the "diagnostic sheet" */
-body::before {
-  content: "";
-  position: fixed;
-  inset: 0;
-  z-index: 0;
-  pointer-events: none;
-  background-image:
-    linear-gradient(var(--border) 1px, transparent 1px),
-    linear-gradient(90deg, var(--border) 1px, transparent 1px);
-  background-size: 44px 44px;
-  opacity: 0.35;
-  mask-image: radial-gradient(ellipse 80% 60% at 50% 0%, black, transparent 75%);
-  -webkit-mask-image: radial-gradient(ellipse 80% 60% at 50% 0%, black, transparent 75%);
+  line-height: 1.55;
+  letter-spacing: -0.005em;
 }
 
 h1, h2, h3, h4 {
   font-family: var(--font-display);
-  font-weight: 700;
-  letter-spacing: -0.02em;
+  font-weight: 600;
+  letter-spacing: -0.03em;
   text-wrap: balance;
   margin: 0;
+  color: var(--ink);
 }
 
 button { font-family: inherit; cursor: pointer; }
-
 a { color: var(--accent); text-decoration: none; }
 
-.mono { font-family: var(--font-mono); font-variant-numeric: tabular-nums; }
-
-/* App Store squircle-ish icon */
-.ic {
-  border-radius: 22%;
-  border: 1px solid var(--border);
-  object-fit: cover;
-  flex: none;
+.mono {
+  font-family: var(--font-mono);
+  font-variant-numeric: tabular-nums;
 }
 
-.eyebrow {
+/* the YC/Linear tell: tiny uppercase mono labels */
+.label {
   font-family: var(--font-mono);
-  font-size: 0.72rem;
-  letter-spacing: 0.14em;
+  font-size: 0.68rem;
+  letter-spacing: 0.12em;
   text-transform: uppercase;
-  color: var(--ink-3);
+  color: var(--ink-4);
+  font-weight: 500;
+}
+
+/* App Store squircle icon */
+.ic {
+  border-radius: 22.5%;
+  border: 1px solid var(--line);
+  object-fit: cover;
+  flex: none;
+  background: var(--surface-2);
 }
 
 :focus-visible {
   outline: 2px solid var(--accent);
   outline-offset: 2px;
-  border-radius: 4px;
+  border-radius: 3px;
+}
+
+/* ---- shared motion primitives ---- */
+@keyframes rise {
+  from { opacity: 0; transform: translateY(12px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+@keyframes fade {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+@keyframes shimmer {
+  from { background-position: -180% 0; }
+  to { background-position: 180% 0; }
+}
+@keyframes spin { to { transform: rotate(360deg); } }
+
+/* staggered reveal utility — set --i on the element */
+.reveal {
+  opacity: 0;
+  animation: rise 0.55s var(--ease) forwards;
+  animation-delay: calc(var(--i, 0) * 70ms);
+}
+
+/* skeleton shimmer block */
+.skeleton {
+  background: linear-gradient(
+    100deg,
+    var(--surface-2) 30%,
+    var(--line) 50%,
+    var(--surface-2) 70%
+  );
+  background-size: 200% 100%;
+  animation: shimmer 1.4s linear infinite;
+  border-radius: var(--r-sm);
 }
 
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after {
     animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
     transition-duration: 0.001ms !important;
     scroll-behavior: auto !important;
   }
+  .reveal { opacity: 1; }
 }

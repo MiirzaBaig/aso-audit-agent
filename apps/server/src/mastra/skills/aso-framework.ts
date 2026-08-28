@@ -58,6 +58,9 @@ HARD RULES:
     asserting a conclusion you can't support.
   - Prefer the highest-weighted, lowest-score dimensions first — that's where the
     overall score moves most.
+  - Write finished, human copy. Do NOT append bookkeeping tags like
+    "(provenance: inferred)", "(provenance: crafted)", or "(character count = N)"
+    into any field. For length-limited rewrites you MAY end with a short "(N chars)".
 
 Return ONLY structured output matching the requested schema. No prose outside it.
 `.trim(),
