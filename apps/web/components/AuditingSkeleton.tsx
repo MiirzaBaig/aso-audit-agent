@@ -57,11 +57,10 @@ export function AuditingSkeleton({
       {slow && (
         <div className="wakeup reveal" role="status">
           <span className="zzz" aria-hidden>😴</span>
-          <span>
-            <b>hang tight, the server&apos;s waking up.</b> it sleeps on the free tier when
-            nobody&apos;s around, so the first run after a quiet spell takes a few extra seconds.
-            it&apos;ll be snappy right after.
-          </span>
+          <div className="wtext">
+            <b>waking the server up</b>
+            <span>free tier naps when it&apos;s idle. first run&apos;s slow, rest are quick.</span>
+          </div>
         </div>
       )}
       <div className="statusbar reveal">
@@ -105,26 +104,38 @@ export function AuditingSkeleton({
           gap: 1.25rem;
         }
         .wakeup {
-          display: flex;
-          align-items: flex-start;
+          display: inline-flex;
+          align-items: center;
           gap: 0.7rem;
-          padding: 0.85rem 1.05rem;
-          border-radius: var(--r-md);
+          padding: 0.6rem 0.9rem 0.6rem 0.7rem;
+          border-radius: 999px;
           background: var(--accent-wash);
-          border: 1px solid color-mix(in srgb, var(--accent) 22%, transparent);
-          font-size: 0.85rem;
-          line-height: 1.5;
-          color: var(--ink-2);
+          border: 1px solid color-mix(in srgb, var(--accent) 20%, transparent);
+          align-self: flex-start;
         }
-        .wakeup b { color: var(--ink); font-weight: 600; }
         .zzz {
-          font-size: 1.1rem;
-          line-height: 1.3;
-          animation: bob 2s ease-in-out infinite;
+          font-size: 1.2rem;
+          line-height: 1;
+          animation: bob 2.2s ease-in-out infinite;
         }
         @keyframes bob {
-          0%, 100% { transform: translateY(0); }
-          50% { transform: translateY(-2px); }
+          0%, 100% { transform: translateY(0) rotate(0); }
+          50% { transform: translateY(-2px) rotate(-6deg); }
+        }
+        .wtext {
+          display: flex;
+          flex-direction: column;
+          line-height: 1.35;
+        }
+        .wtext b {
+          font-size: 0.85rem;
+          font-weight: 600;
+          color: var(--ink);
+          letter-spacing: -0.01em;
+        }
+        .wtext span {
+          font-size: 0.76rem;
+          color: var(--ink-3);
         }
         .statusbar {
           display: flex;
