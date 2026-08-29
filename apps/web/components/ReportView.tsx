@@ -26,8 +26,8 @@ export function ReportView({
   const { report, analysisSource } = result;
 
   return (
-    <div className="report">
-      <section className="hero reveal" style={{ ["--i" as string]: 0 }}>
+    <div className="report" data-print-report>
+      <section className="hero reveal" data-print-section style={{ ["--i" as string]: 0 }}>
         <div className="hero-left">
           <div className="who">
             <Image src={identity.iconUrl} alt="" width={44} height={44} className="ic" />
@@ -105,6 +105,15 @@ export function ReportView({
           border-radius: var(--r-lg);
           padding: 2rem;
           box-shadow: var(--shadow-2);
+          transition: transform 0.22s var(--ease), border-color 0.22s var(--ease),
+            box-shadow 0.22s var(--ease);
+        }
+        @media (hover: hover) {
+          .hero:hover {
+            transform: translateY(-2px);
+            border-color: color-mix(in srgb, var(--accent) 28%, var(--line-2));
+            box-shadow: var(--shadow-3);
+          }
         }
         .who {
           display: flex;
@@ -153,6 +162,28 @@ export function ReportView({
           .hero { grid-template-columns: 1fr; }
           .headline { font-size: 1.3rem; }
         }
+        @media print {
+          .report {
+            gap: 8mm !important;
+            width: 100% !important;
+          }
+          .hero {
+            grid-template-columns: 1fr 150px !important;
+            gap: 8mm !important;
+            padding: 6mm !important;
+            border-radius: 6px !important;
+            box-shadow: none !important;
+            transform: none !important;
+          }
+          .who { margin-bottom: 3mm !important; }
+          .headline {
+            max-width: none !important;
+            margin-bottom: 3mm !important;
+            font-size: 16pt !important;
+            line-height: 1.16 !important;
+          }
+          .source { font-size: 7.5pt !important; }
+        }
       `}</style>
     </div>
   );
@@ -171,7 +202,7 @@ function Block({
   children: React.ReactNode;
 }) {
   return (
-    <section className="block reveal" style={{ ["--i" as string]: i }}>
+    <section className="block reveal" data-print-section style={{ ["--i" as string]: i }}>
       <header>
         <span className="label">{eyebrow}</span>
         {hint && <span className="hint">{hint}</span>}
@@ -186,6 +217,14 @@ function Block({
           gap: 1rem;
         }
         .hint { font-size: 0.78rem; color: var(--ink-4); }
+        @media print {
+          .block { gap: 3mm !important; }
+          header {
+            padding-bottom: 2mm !important;
+            border-bottom: 1px solid var(--line-2) !important;
+          }
+          .hint { display: none !important; }
+        }
       `}</style>
     </section>
   );

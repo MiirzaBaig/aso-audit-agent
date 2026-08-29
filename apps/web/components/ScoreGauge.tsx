@@ -120,6 +120,24 @@ export function ScoreGauge({ overall, grade }: Props) {
           max-width: 24ch;
           text-align: center;
         }
+        @media print {
+          .gauge { gap: 2mm !important; }
+          svg {
+            width: 132px !important;
+            height: 132px !important;
+          }
+          .num { font-size: 2.65rem !important; }
+          .denom { font-size: 0.62rem !important; }
+          .grades { gap: 1.5mm !important; }
+          .g {
+            width: 18px !important;
+            height: 18px !important;
+            border-radius: 4px !important;
+            font-size: 7pt !important;
+            transform: none !important;
+          }
+          .blurb { display: none !important; }
+        }
       `}</style>
     </div>
   );

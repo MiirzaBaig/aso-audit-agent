@@ -21,6 +21,7 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
+  metadataBase: new URL(process.env.NEXT_PUBLIC_SITE_URL ?? "http://localhost:3000"),
   title: "ASO Audit — score your App Store listing",
   description:
     "Paste an App Store URL and get a grounded App Store Optimization audit in seconds. Scores are computed from Apple's data, not guessed.",

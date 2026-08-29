@@ -1,6 +1,7 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
+import { flushSync } from "react-dom";
 import type { DimensionScore } from "@aso/shared";
 import { bandColor, bandWash, biggestLever } from "@/lib/score-format";
 
@@ -12,7 +13,11 @@ function observabilityReason(id: string): string {
     case "keywords":
       return "Apple keeps the iOS keyword field private — this is inferred from the title, subtitle and description.";
     case "screenshots":
-      return "Only slot count is measured; on-image text quality needs a visual review.";
+      return "Slot count is measured and Deep scan can OCR captions, but design cohesion still needs a visual review.";
+    case "video":
+      return "Public metadata confirms presence only; hook, pacing and muted comprehension need a manual watch.";
+    case "reviews":
+      return "Ratings and recent review text are measured, but developer response coverage is not in Apple's public RSS feed.";
     case "icon":
       return "Icon presence is confirmed, but distinctiveness at small sizes is a visual judgment.";
     case "conversion":
@@ -33,6 +38,12 @@ function observabilityReason(id: string): string {
 export function DimensionBars({ dimensions }: { dimensions: DimensionScore[] }) {
   const [filter, setFilter] = useState<Filter>("all");
   const lever = useMemo(() => biggestLever(dimensions), [dimensions]);
+
+  useEffect(() => {
+    const showAllForPdf = () => flushSync(() => setFilter("all"));
+    window.addEventListener("beforeprint", showAllForPdf);
+    return () => window.removeEventListener("beforeprint", showAllForPdf);
+  }, []);
 
   const sorted = useMemo(
     () => [...dimensions].sort((a, b) => a.score - b.score),
@@ -67,6 +78,10 @@ export function DimensionBars({ dimensions }: { dimensions: DimensionScore[] }) 
         </div>
         <Legend />
       </div>
+      <p className="weight-note">
+        Brief weights total 110%, so this report preserves the relative weights and
+        normalizes them to a true 100-point score.
+      </p>
 
       <div className="rows">
         {shown.map((d, i) => (
@@ -82,6 +97,13 @@ export function DimensionBars({ dimensions }: { dimensions: DimensionScore[] }) 
           justify-content: space-between;
           gap: 1rem;
           flex-wrap: wrap;
+        }
+        .weight-note {
+          margin: -0.25rem 0 0;
+          max-width: 72ch;
+          font-size: 0.76rem;
+          line-height: 1.45;
+          color: var(--ink-4);
         }
         .segment {
           display: inline-flex;
@@ -101,8 +123,13 @@ export function DimensionBars({ dimensions }: { dimensions: DimensionScore[] }) 
           font-weight: 500;
           padding: 0.35rem 0.85rem;
           border-radius: 999px;
-          transition: color 0.15s, background 0.2s var(--ease);
+          transition: color 0.15s, background 0.2s var(--ease), transform 0.14s var(--ease);
         }
+        .seg:not(.on):hover {
+          color: var(--ink);
+          background: color-mix(in srgb, var(--surface) 72%, transparent);
+        }
+        .seg:active { transform: translateY(1px); }
         .seg .c {
           font-size: 0.68rem;
           color: var(--ink-4);
@@ -114,6 +141,15 @@ export function DimensionBars({ dimensions }: { dimensions: DimensionScore[] }) 
         }
         .seg.on .c { color: var(--accent); }
         .rows { display: flex; flex-direction: column; }
+        @media print {
+          .wrap { gap: 3mm !important; }
+          .toolbar { display: none !important; }
+          .weight-note {
+            margin: 0 !important;
+            font-size: 7pt !important;
+          }
+          .rows { gap: 0 !important; }
+        }
       `}</style>
     </div>
   );
@@ -223,10 +259,11 @@ function DimensionRow({
           background: none;
           border: none;
           text-align: left;
-          transition: background 0.14s;
+          transition: background 0.14s, transform 0.14s var(--ease);
           border-radius: var(--r-sm);
         }
-        .head:hover { background: var(--surface-2); }
+        .head:hover { background: var(--surface-2); transform: translateX(2px); }
+        .head:active { transform: translateX(0); }
         .rail {
           height: 30px;
           width: 3px;
@@ -352,6 +389,40 @@ function DimensionRow({
           .head { grid-template-columns: 3px auto 1fr auto; gap: 0.6rem; }
           .chev { display: none; }
           .evidence { padding-left: 1.5rem; }
+        }
+        @media print {
+          .row {
+            break-inside: avoid !important;
+            animation: none !important;
+          }
+          .head {
+            grid-template-columns: 3px 26px 1fr 28px !important;
+            gap: 3mm !important;
+            padding: 2.5mm 0 !important;
+            transform: none !important;
+            background: transparent !important;
+          }
+          .chip {
+            width: 26px !important;
+            padding: 0 !important;
+            font-size: 8pt !important;
+          }
+          .titles { flex-wrap: wrap !important; gap: 1.5mm !important; }
+          .lever, .tag { font-size: 6pt !important; }
+          .tip, .chev { display: none !important; }
+          .meter { max-width: none !important; height: 3px !important; }
+          .evwrap { grid-template-rows: 1fr !important; }
+          .evinner { overflow: visible !important; }
+          .evidence {
+            padding: 0 0 2.5mm 10mm !important;
+            gap: 1mm !important;
+            opacity: 1 !important;
+            transform: none !important;
+          }
+          .evidence li {
+            font-size: 8pt !important;
+            line-height: 1.35 !important;
+          }
         }
       `}</style>
     </div>

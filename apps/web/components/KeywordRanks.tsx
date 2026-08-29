@@ -28,6 +28,17 @@ export function KeywordRanks({ ranks }: { ranks: KeywordRank[] }) {
           grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
           gap: 0.75rem;
         }
+        @media print {
+          .wrap { gap: 3mm !important; }
+          .intro {
+            max-width: none !important;
+            font-size: 8pt !important;
+          }
+          .grid {
+            grid-template-columns: repeat(4, minmax(0, 1fr)) !important;
+            gap: 2.5mm !important;
+          }
+        }
       `}</style>
     </div>
   );
@@ -67,9 +78,15 @@ function RankChip({ r }: { r: KeywordRank }) {
           border: 1px solid var(--line);
           border-radius: var(--r-md);
           background: var(--surface);
-          transition: border-color 0.15s, transform 0.15s var(--ease);
+          box-shadow: 0 0 0 0 color-mix(in srgb, ${color} 0%, transparent);
+          transition: border-color 0.15s, transform 0.15s var(--ease),
+            box-shadow 0.15s var(--ease);
         }
-        .chip:hover { border-color: var(--line-2); transform: translateY(-2px); }
+        .chip:hover {
+          border-color: ${color};
+          transform: translateY(-2px);
+          box-shadow: 0 8px 24px -18px ${color};
+        }
         .kw {
           font-size: 0.82rem;
           color: var(--ink-2);
@@ -89,6 +106,24 @@ function RankChip({ r }: { r: KeywordRank }) {
           letter-spacing: 0.06em;
           padding: 0.15rem 0.45rem;
           border-radius: 5px;
+        }
+        @media print {
+          .chip {
+            gap: 1.5mm !important;
+            padding: 2.5mm !important;
+            border-radius: 5px !important;
+            break-inside: avoid !important;
+            transform: none !important;
+            box-shadow: none !important;
+          }
+          .kw {
+            font-size: 7.5pt !important;
+            white-space: normal !important;
+          }
+          .hash { font-size: 9pt !important; }
+          .rank { font-size: 16pt !important; }
+          .miss { font-size: 7.5pt !important; }
+          .badge { font-size: 6pt !important; }
         }
       `}</style>
     </div>

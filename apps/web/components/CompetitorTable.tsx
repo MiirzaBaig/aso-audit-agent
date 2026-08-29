@@ -96,10 +96,10 @@ export function CompetitorTable({
           padding: 0.85rem 0.9rem;
           border-bottom: 1px solid var(--line);
           border-radius: var(--r-sm);
-          transition: background 0.14s;
+          transition: background 0.14s, transform 0.14s var(--ease);
         }
         .prow:last-child { border-bottom: none; }
-        .prow:not(.you):hover { background: var(--surface-2); }
+        .prow:not(.you):hover { background: var(--surface-2); transform: translateX(2px); }
         .prow.you {
           background: var(--accent-wash);
           box-shadow: inset 3px 0 0 var(--accent);
@@ -138,6 +138,7 @@ export function CompetitorTable({
           height: 100%;
           background: var(--good);
           border-radius: 999px;
+          transition: width 0.45s var(--ease);
         }
         .yes { color: var(--good); }
         .empty { font-size: 0.88rem; color: var(--ink-3); }
@@ -149,6 +150,41 @@ export function CompetitorTable({
           }
           .prow .app { grid-column: 1 / -1; }
           .ratingcell { align-items: flex-start; }
+        }
+        @media print {
+          .wrap { gap: 3mm !important; }
+          .narrative {
+            max-width: none !important;
+            font-size: 8pt !important;
+            line-height: 1.35 !important;
+          }
+          .hrow, .prow {
+            grid-template-columns: 1fr 22mm 20mm 16mm 14mm !important;
+            gap: 2mm !important;
+          }
+          .hrow {
+            display: grid !important;
+            padding: 0 0 2mm !important;
+          }
+          .prow {
+            padding: 2mm 0 !important;
+            border-radius: 0 !important;
+            transform: none !important;
+            background: transparent !important;
+          }
+          .prow.you {
+            background: var(--accent-wash) !important;
+            box-shadow: inset 2px 0 0 var(--accent) !important;
+            padding-left: 2mm !important;
+            padding-right: 2mm !important;
+          }
+          .ic {
+            width: 24px !important;
+            height: 24px !important;
+          }
+          .nm, .v { font-size: 7.5pt !important; }
+          .you-tag { font-size: 6.5pt !important; }
+          .rbar { max-width: 18mm !important; height: 3px !important; }
         }
       `}</style>
     </div>
