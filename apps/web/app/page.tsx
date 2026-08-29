@@ -290,19 +290,29 @@ export default function Home() {
           color: var(--ink-3);
           font-size: 0.82rem;
         }
-        @media (max-width: 560px) {
-          .proof { flex-wrap: wrap; gap: 1rem; }
+        @media (max-width: 700px) {
+          main { padding: 0 1.15rem; }
           .stage { padding: 1.5rem 0 3rem; }
-          .topbar { align-items: flex-start; gap: 1rem; }
-          .topright {
-            flex-wrap: wrap;
-            justify-content: flex-end;
-            gap: 0.65rem;
+          .hero { gap: 1.15rem; }
+          .sub { font-size: 0.98rem; }
+          .result-bar {
+            flex-direction: column;
+            align-items: stretch;
+            gap: 0.75rem;
           }
+        }
+        @media (max-width: 560px) {
+          main { padding: 0 1rem; }
+          .proof { gap: 1.15rem 1.4rem; flex-wrap: wrap; }
+          .topbar { align-items: center; }
+          .topright { gap: 0.6rem; }
+          .ghost-link { display: none; }
           .foot {
             flex-direction: column;
             align-items: flex-start;
+            gap: 0.9rem;
           }
+          h1 { font-size: clamp(2rem, 9vw, 2.6rem); }
         }
       `}</style>
     </>

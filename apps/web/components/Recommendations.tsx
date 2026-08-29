@@ -261,8 +261,15 @@ function RecRow({ rec, index }: { rec: Recommendation; index: number }) {
           max-width: 70ch;
         }
         @media (max-width: 640px) {
-          .row { grid-template-columns: 1fr; gap: 0.6rem; }
-          .meta { padding-top: 0; }
+          .row { grid-template-columns: 1fr; gap: 0.7rem; padding: 1rem 0.15rem; }
+          /* rail becomes a compact horizontal strip above the content */
+          .rail {
+            flex-direction: row;
+            align-items: center;
+            gap: 0.55rem;
+          }
+          .dim { margin-left: auto; }
+          .d-v { font-size: 0.84rem; }
         }
         @media print {
           .row {

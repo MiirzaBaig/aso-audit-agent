@@ -106,6 +106,13 @@ body {
   text-rendering: optimizeLegibility;
   line-height: 1.55;
   letter-spacing: -0.005em;
+  /* never let anything cause a sideways scroll on mobile */
+  overflow-x: hidden;
+}
+
+/* long unbroken strings (keyword fields, urls) must wrap, not overflow */
+p, span, div, li, td, h1, h2, h3, h4, h5 {
+  overflow-wrap: break-word;
 }
 
 h1, h2, h3, h4 {

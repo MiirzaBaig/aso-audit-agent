@@ -65,6 +65,10 @@ export function ExportBar({
           color: var(--good);
           background: var(--good-wash);
         }
+        @media (max-width: 700px) {
+          .bar { width: 100%; }
+          .act { flex: 1; justify-content: center; padding: 0.65rem 0.85rem; }
+        }
       `}</style>
     </div>
   );

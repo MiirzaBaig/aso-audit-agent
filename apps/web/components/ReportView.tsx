@@ -159,8 +159,13 @@ export function ReportView({
         .limits li { font-size: 0.83rem; color: var(--ink-3); line-height: 1.5; }
         @media (max-width: 720px) {
           .report { gap: 2.25rem; }
-          .hero { grid-template-columns: 1fr; }
+          .hero {
+            grid-template-columns: 1fr;
+            gap: 1.5rem;
+            padding: 1.5rem 1.35rem;
+          }
           .headline { font-size: 1.3rem; }
+          .hero-right { display: flex; justify-content: center; }
         }
         @media print {
           .report {
