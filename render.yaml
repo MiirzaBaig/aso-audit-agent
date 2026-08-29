@@ -7,7 +7,7 @@ services:
     runtime: node
     plan: free
     # build the whole workspace so @aso/shared resolves, then build the server
-    buildCommand: corepack enable && pnpm install --frozen-lockfile=false && pnpm --filter @aso/server build
+    buildCommand: corepack enable && corepack prepare pnpm@9.12.0 --activate && pnpm install --frozen-lockfile=false && pnpm --filter @aso/server build
     startCommand: node apps/server/.mastra/output/index.mjs
     autoDeploy: true
     envVars:
