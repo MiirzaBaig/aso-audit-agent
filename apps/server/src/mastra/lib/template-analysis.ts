@@ -92,6 +92,18 @@ export function buildTemplateAnalysis(
       after: `10 screenshots; captions on the first 3 leading with the core benefit and a top keyword`,
     });
   }
+  if (!listing.screenshotText.value?.length && shots > 0) {
+    add({
+      tier: "high-impact",
+      dimension: "screenshots",
+      title: "Run a visual pass on the first 3 screenshots",
+      rationale:
+        "The first 1-3 screenshots carry the search-card pitch, but OCR did not recover caption text. Add short, readable benefit captions that work at thumbnail size.",
+      evidence: "Screenshot OCR was skipped, failed, or found no legible on-image text.",
+      before: "Current first screenshots: caption text not verified by OCR",
+      after: "Screenshot 1: [core outcome]. Screenshot 2: [proof or speed]. Screenshot 3: [key feature].",
+    });
+  }
 
   // --- Video ---
   if (!listing.hasAppPreviewVideo) {
@@ -104,6 +116,17 @@ export function buildTemplateAnalysis(
       evidence: "App preview video: none detected.",
       before: "No video",
       after: "15–30s preview; hook in first 3s; readable without sound",
+    });
+  } else {
+    add({
+      tier: "high-impact",
+      dimension: "video",
+      title: "Audit the preview video's first 3 seconds",
+      rationale:
+        "A video exists, but metadata cannot prove whether it hooks immediately, stays within a tight 15-30s story, or works muted. Those are the conversion checks that decide whether the asset helps.",
+      evidence: "App preview video detected; hook/pacing/muted readability not measurable from public metadata.",
+      before: "Existing preview video",
+      after: "First frame shows the outcome; first 3s states value; captions make it understandable without sound.",
     });
   }
 
@@ -118,6 +141,32 @@ export function buildTemplateAnalysis(
       evidence: `Average ${listing.averageRating.toFixed(1)}★ across ${listing.ratingCount.toLocaleString()} ratings.`,
       before: null,
       after: null,
+    });
+  }
+  if (listing.reviews.some((r) => r.rating <= 3)) {
+    add({
+      tier: "quick-win",
+      dimension: "reviews",
+      title: "Reply to recent negative reviews",
+      rationale:
+        "Recent low-star reviews are visible social proof. Public RSS exposes the complaints, but not developer response coverage, so verify App Store Connect replies and close the loop on the repeated theme.",
+      evidence: `${listing.reviews.filter((r) => r.rating <= 3).length} recent review(s) are 3 stars or lower.`,
+      before: null,
+      after: null,
+    });
+  }
+
+  // --- Icon ---
+  if (score("icon") < 7) {
+    add({
+      tier: "high-impact",
+      dimension: "icon",
+      title: "Run a small-size icon test",
+      rationale:
+        "The icon exists, but distinctiveness, category fit and legibility at search-result size are visual checks. Compare it at 40px beside competitors before deciding it is strong.",
+      evidence: byId.get("icon")?.evidence.join(" ") ?? "Icon quality requires visual review.",
+      before: "Current icon, judged only by presence/resolution",
+      after: "40px search-result mockup beside top competitors; remove tiny text and increase silhouette contrast if it blends in.",
     });
   }
 
@@ -171,7 +220,7 @@ export function buildTemplateAnalysis(
       tier: "strategic",
       dimension: "competitive",
       title: "Match the category's asset and rating bar",
-      rationale: `Top competitors in ${listing.primaryCategory} sit around ${medianRating.toFixed(1)}★ with fuller galleries. Close the largest single gap first.`,
+      rationale: `Top competitors in ${listing.primaryCategory} sit around ${medianRating.toFixed(1)}★ with fuller galleries and overlapping public keyword language. Close the largest observable gap first, then manually compare visual style and keyword coverage.`,
       evidence: `Competitors: ${competitors.map((c) => `${c.name} (${c.averageRating.toFixed(1)}★)`).join(", ")}.`,
       before: null,
       after: null,

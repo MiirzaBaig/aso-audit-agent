@@ -150,9 +150,18 @@ export async function getCompetitors({
     }
   }
 
-  return [...found.values()]
+  const competitors = [...found.values()]
     .sort((a, b) => b.ratingCount - a.ratingCount)
     .slice(0, limit);
+
+  return Promise.all(
+    competitors.map(async (competitor) => ({
+      ...competitor,
+      hasVideo: await detectAppPreviewVideo(
+        buildStoreUrl(competitor.appId, country),
+      ),
+    })),
+  );
 }
 
 function significantWords(name: string): string[] {

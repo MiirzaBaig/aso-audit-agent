@@ -56,7 +56,9 @@ export const scoreReviews: DimensionScorer = ({ listing }) => {
     evidence.push("No recent review text available to mine for themes.");
   }
 
-  return { id: "reviews", score: clampScore(score), evidence, observable: true };
+  evidence.push("Developer responses to negative reviews are not exposed in the public RSS feed — verify response coverage manually.");
+
+  return { id: "reviews", score: clampScore(score), evidence, observable: false };
 };
 
 const COMPLAINT_KEYWORDS: Record<string, RegExp> = {
