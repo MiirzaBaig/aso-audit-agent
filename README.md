@@ -10,7 +10,11 @@ scores computed from apple's actual data, not guessed by a model. graded scoreca
 
 built with [mastra](https://mastra.ai) (agent, tools, a suspend/resume workflow, and a skill) and a next.js chat ui.
 
+**[try it live -> aso-audit-nine.vercel.app](https://aso-audit-nine.vercel.app)**
+
 </div>
+
+> heads up: the backend runs on a free tier that goes to sleep when it's idle, so the very first audit after a quiet spell takes ~30-50s while it wakes up. every run after that is quick. (the ui tells you this too if it happens.)
 
 ---
 

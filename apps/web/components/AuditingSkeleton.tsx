@@ -34,18 +34,36 @@ export function AuditingSkeleton({
   ];
 
   const [stage, setStage] = useState(0);
+  const [slow, setSlow] = useState(false);
 
   useEffect(() => {
     const id = setInterval(
       () => setStage((s) => Math.min(s + 1, stages.length - 1)),
       deepScan ? 1900 : 1500,
     );
-    return () => clearInterval(id);
+    // the backend runs on a free tier that dozes off when idle. if we're still
+    // waiting after ~9s, it's probably just waking up — say so instead of
+    // leaving the user guessing.
+    const slowTimer = setTimeout(() => setSlow(true), 9000);
+    return () => {
+      clearInterval(id);
+      clearTimeout(slowTimer);
+    };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [stages.length, deepScan]);
 
   return (
     <div className="wrap">
+      {slow && (
+        <div className="wakeup reveal" role="status">
+          <span className="zzz" aria-hidden>😴</span>
+          <span>
+            <b>hang tight, the server&apos;s waking up.</b> it sleeps on the free tier when
+            nobody&apos;s around, so the first run after a quiet spell takes a few extra seconds.
+            it&apos;ll be snappy right after.
+          </span>
+        </div>
+      )}
       <div className="statusbar reveal">
         <Image src={identity.iconUrl} alt="" width={30} height={30} className="ic" />
         <div className="who">
@@ -85,6 +103,28 @@ export function AuditingSkeleton({
           display: flex;
           flex-direction: column;
           gap: 1.25rem;
+        }
+        .wakeup {
+          display: flex;
+          align-items: flex-start;
+          gap: 0.7rem;
+          padding: 0.85rem 1.05rem;
+          border-radius: var(--r-md);
+          background: var(--accent-wash);
+          border: 1px solid color-mix(in srgb, var(--accent) 22%, transparent);
+          font-size: 0.85rem;
+          line-height: 1.5;
+          color: var(--ink-2);
+        }
+        .wakeup b { color: var(--ink); font-weight: 600; }
+        .zzz {
+          font-size: 1.1rem;
+          line-height: 1.3;
+          animation: bob 2s ease-in-out infinite;
+        }
+        @keyframes bob {
+          0%, 100% { transform: translateY(0); }
+          50% { transform: translateY(-2px); }
         }
         .statusbar {
           display: flex;
