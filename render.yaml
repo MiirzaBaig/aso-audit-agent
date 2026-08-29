@@ -1,0 +1,29 @@
+# Render blueprint for the Mastra server (the audit backend).
+# Deploy: render.com -> New -> Blueprint -> pick this repo. Or configure a
+# Web Service manually with the settings below.
+services:
+  - type: web
+    name: aso-audit-server
+    runtime: node
+    plan: free
+    # build the whole workspace so @aso/shared resolves, then build the server
+    buildCommand: corepack enable && pnpm install --frozen-lockfile=false && pnpm --filter @aso/server build
+    startCommand: node apps/server/.mastra/output/index.mjs
+    autoDeploy: true
+    envVars:
+      - key: NODE_VERSION
+        value: "20"
+      - key: NIM_MODEL
+        value: openai/gpt-oss-120b
+      - key: LIBSQL_URL
+        value: file:./aso-audit.db
+      - key: ENABLE_OCR
+        value: "false"
+      # set these two in the Render dashboard (secret):
+      - key: NIM_API_KEY
+        sync: false
+      - key: FIRECRAWL_API_KEY
+        sync: false
+      # set to your Vercel URL after the frontend is live:
+      - key: CORS_ORIGIN
+        sync: false
