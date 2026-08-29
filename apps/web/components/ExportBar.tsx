@@ -34,7 +34,7 @@ export function ExportBar({
       <button className="act" onClick={() => window.print()}>
         <Icon name="pdf" /> Save PDF
       </button>
-      <button className="act" onClick={copySummary}>
+      <button className={`act ${copied ? "done" : ""}`} onClick={copySummary}>
         <Icon name={copied ? "check" : "copy"} /> {copied ? "Copied" : "Copy summary"}
       </button>
 
@@ -58,6 +58,12 @@ export function ExportBar({
           border-color: var(--accent);
           color: var(--accent);
           transform: translateY(-1px);
+        }
+        .act:active { transform: translateY(0); }
+        .act.done {
+          border-color: var(--good);
+          color: var(--good);
+          background: var(--good-wash);
         }
       `}</style>
     </div>
