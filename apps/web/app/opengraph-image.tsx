@@ -164,57 +164,66 @@ function AuditCard() {
         </div>
       </div>
 
-      <div style={{ display: "flex", gap: 24, alignItems: "center", marginBottom: 28 }}>
+      <div style={{ display: "flex", gap: 22, alignItems: "center", marginBottom: 30 }}>
         <Gauge />
-        <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
-          <div style={{ display: "flex", fontSize: 44, fontWeight: 700 }}>78</div>
-          <div style={{ display: "flex", fontSize: 18, color: MUTED }}>overall score</div>
-          <div style={{ display: "flex", fontSize: 16, color: GOOD }}>+22 points available</div>
+        <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
+          <div style={{ display: "flex", fontSize: 19, color: INK, fontWeight: 600 }}>Grade B</div>
+          <div style={{ display: "flex", fontSize: 16, color: MUTED }}>solid, room to grow</div>
+          <div style={{ display: "flex", fontSize: 15, color: GOOD }}>+22 points on the table</div>
         </div>
       </div>
 
-      <div style={{ display: "flex", flexDirection: "column", gap: 14 }}>
+      <div style={{ display: "flex", flexDirection: "column", gap: 18 }}>
         <Metric label="Title & subtitle" value="8.6" color={GOOD} width={86} />
         <Metric label="Keywords" value="6.2" color={FAIR} width={62} />
         <Metric label="Screenshots" value="4.8" color={POOR} width={48} />
-        <Metric label="Reviews" value="7.4" color={FAIR} width={74} />
-      </div>
-
-      <div
-        style={{
-          display: "flex",
-          marginTop: "auto",
-          borderTop: `1px solid ${LINE}`,
-          paddingTop: 20,
-          gap: 12,
-        }}
-      >
-        <Fix number="1" label="Quick wins" color={GOOD} />
-        <Fix number="4" label="High impact" color={ACCENT} />
       </div>
     </div>
   );
 }
 
+// Satori doesn't do conic-gradient, and rotate() on an SVG child renders badly.
+// The reliable path: an SVG donut where the value arc uses stroke-dasharray,
+// with the number stacked beside it. The whole SVG is pre-rotated -90deg so the
+// arc starts at the top. Score is placed via an overlaid absolute div.
 function Gauge() {
-  const radius = 54;
-  const circumference = 2 * Math.PI * radius;
+  const r = 60;
+  const c = 2 * Math.PI * r;
+  const pct = 78;
   return (
-    <svg width="132" height="132" viewBox="0 0 132 132" fill="none">
-      <circle cx="66" cy="66" r={radius} stroke={PANEL_2} strokeWidth="10" />
-      <circle
-        cx="66"
-        cy="66"
-        r={radius}
-        stroke={GOOD}
-        strokeWidth="10"
-        strokeLinecap="round"
-        strokeDasharray={circumference}
-        strokeDashoffset={circumference * 0.22}
-        transform="rotate(-90 66 66)"
-      />
-      <circle cx="66" cy="66" r="36" fill={BG} />
-    </svg>
+    <div style={{ display: "flex", position: "relative", width: 150, height: 150 }}>
+      <svg width="150" height="150" viewBox="0 0 150 150" style={{ transform: "rotate(-90deg)" }}>
+        <circle cx="75" cy="75" r={r} fill="none" stroke={PANEL_2} strokeWidth="11" />
+        <circle
+          cx="75"
+          cy="75"
+          r={r}
+          fill="none"
+          stroke={GOOD}
+          strokeWidth="11"
+          strokeLinecap="round"
+          strokeDasharray={`${(c * pct) / 100} ${c}`}
+        />
+      </svg>
+      <div
+        style={{
+          position: "absolute",
+          top: 0,
+          left: 0,
+          width: 150,
+          height: 150,
+          display: "flex",
+          flexDirection: "column",
+          alignItems: "center",
+          justifyContent: "center",
+        }}
+      >
+        <div style={{ display: "flex", fontSize: 48, fontWeight: 700, color: INK, lineHeight: 1 }}>
+          {pct}
+        </div>
+        <div style={{ display: "flex", fontSize: 14, color: FAINT, marginTop: 3 }}>/ 100</div>
+      </div>
+    </div>
   );
 }
 
@@ -242,21 +251,3 @@ function Metric({
   );
 }
 
-function Fix({ number, label, color }: { number: string; label: string; color: string }) {
-  return (
-    <div
-      style={{
-        display: "flex",
-        flex: 1,
-        alignItems: "center",
-        gap: 10,
-        background: PANEL_2,
-        borderRadius: 14,
-        padding: "12px 14px",
-      }}
-    >
-      <span style={{ display: "flex", fontSize: 24, fontWeight: 700, color }}>{number}</span>
-      <span style={{ display: "flex", fontSize: 16, color: MUTED }}>{label}</span>
-    </div>
-  );
-}
