@@ -20,8 +20,16 @@ const geistMono = Geist_Mono({
   weight: ["400", "500"],
 });
 
+// resolve the public origin so og:image points at the deployed url, not localhost.
+// order: explicit env -> vercel's injected production url -> the known prod alias.
+const siteUrl =
+  process.env.NEXT_PUBLIC_SITE_URL ??
+  (process.env.VERCEL_PROJECT_PRODUCTION_URL
+    ? `https://${process.env.VERCEL_PROJECT_PRODUCTION_URL}`
+    : "https://aso-audit-nine.vercel.app");
+
 export const metadata: Metadata = {
-  metadataBase: new URL(process.env.NEXT_PUBLIC_SITE_URL ?? "http://localhost:3000"),
+  metadataBase: new URL(siteUrl),
   title: "ASO Audit — score your App Store listing",
   description:
     "Paste an App Store URL and get a grounded App Store Optimization audit in seconds. Scores are computed from Apple's data, not guessed.",
@@ -32,12 +40,15 @@ export const metadata: Metadata = {
       "Every score computed from Apple's data, not guessed. Graded card, ranked plan, real before/after rewrites.",
     type: "website",
     siteName: "ASO Audit",
+    url: siteUrl,
+    images: [{ url: "/opengraph-image", width: 1200, height: 630, alt: "ASO Audit" }],
   },
   twitter: {
     card: "summary_large_image",
     title: "ASO Audit — score your App Store listing in seconds",
     description:
       "Every score computed from Apple's data, not guessed. Graded card, ranked plan, real before/after rewrites.",
+    images: ["/opengraph-image"],
   },
 };
 
